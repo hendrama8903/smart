@@ -23,14 +23,16 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 # Copy application files
 COPY . .
 
-# Generate optimized files
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
-
 # Set permissions
 RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE $PORT
 
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT
+# config:cache, migrate, serve dijalankan saat START (bukan build)
+# agar environment variables Railway sudah tersedia
+CMD php artisan config:clear && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    php artisan migrate --force && \
+    php artisan serve --host=0.0.0.0 --port=$PORT
