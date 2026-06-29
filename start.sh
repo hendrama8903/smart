@@ -42,4 +42,5 @@ echo "DB_DATABASE: ${DB_DATABASE}"
 
 php artisan config:clear
 php artisan migrate --force
-php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+echo "Starting server on port 8080"
+php artisan serve --host=0.0.0.0 --port=8080

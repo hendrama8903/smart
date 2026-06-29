@@ -20,6 +20,6 @@ COPY . .
 RUN chmod -R 775 storage bootstrap/cache
 RUN chmod +x start.sh
 
-EXPOSE $PORT
+EXPOSE 8080
 
 CMD ["/bin/sh", "/app/start.sh"]
