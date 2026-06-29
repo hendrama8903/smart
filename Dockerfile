@@ -1,6 +1,5 @@
 FROM php:8.4-cli
 
-# Install extensions
 RUN apt-get update && apt-get install -y \
     libpng-dev libjpeg-dev libfreetype6-dev \
     libzip-dev libxml2-dev libonig-dev \
@@ -9,30 +8,22 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql mbstring xml ctype bcmath fileinfo gd zip opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Copy composer files first for caching
 COPY composer.json composer.lock ./
-
-# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
-# Copy application files
 COPY . .
 
-# Set permissions
+# Hapus cache lama yang mungkin ada di repo
+RUN php artisan config:clear || true
+RUN php artisan cache:clear || true
+
 RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE $PORT
 
-# config:cache, migrate, serve dijalankan saat START (bukan build)
-# agar environment variables Railway sudah tersedia
-CMD php artisan config:clear && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache && \
-    php artisan migrate --force && \
-    php artisan serve --host=0.0.0.0 --port=$PORT
+# Tidak pakai config:cache agar Railway env vars terbaca langsung
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT
