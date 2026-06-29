@@ -17,13 +17,9 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 
 COPY . .
 
-# Hapus cache lama yang mungkin ada di repo
-RUN php artisan config:clear || true
-RUN php artisan cache:clear || true
-
 RUN chmod -R 775 storage bootstrap/cache
+RUN chmod +x start.sh
 
 EXPOSE $PORT
 
-# Tidak pakai config:cache agar Railway env vars terbaca langsung
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT
+CMD ["/bin/sh", "/app/start.sh"]
