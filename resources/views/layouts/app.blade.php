@@ -181,6 +181,21 @@ a{color:inherit;text-decoration:none}
 .notif-item.penting .notif-judul{color:var(--stempel)}
 .notif-waktu{font-size:11px;color:var(--redup);margin-top:2px}
 
+/* ── User avatar dropdown ── */
+.user-wrap{position:relative}
+.user-btn{width:38px;height:38px;border-radius:10px;background:var(--hutan);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
+.user-btn:hover{background:var(--hutan-2)}
+.user-av-mini{font-size:13px;font-weight:800;color:#fff;letter-spacing:.02em;line-height:1}
+.user-panel{position:absolute;top:calc(100% + 10px);right:0;width:220px;background:#fff;border:1px solid var(--garis);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:200;display:none;overflow:hidden}
+.user-panel.show{display:block;animation:fade .18s ease}
+.user-panel-top{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--garis)}
+.user-av-lg{width:36px;height:36px;border-radius:10px;background:var(--hutan);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex:0 0 36px}
+.user-panel-name{font-size:13px;font-weight:700;color:var(--tinta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-panel-role{font-size:11px;color:var(--redup);margin-top:1px}
+.user-panel-logout{display:flex;align-items:center;gap:9px;width:100%;padding:12px 16px;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--stempel);font-family:inherit;transition:background .14s}
+.user-panel-logout:hover{background:#FFF5F5}
+.user-panel-logout svg{flex:0 0 15px}
+
 .content{padding:28px 32px 56px;max-width:1180px;width:100%}
 .page{display:none;animation:fade .25s ease}
 .page.show{display:block}
@@ -309,6 +324,7 @@ tbody tr:hover{background:#FBFAF5}
   .menu-btn{display:flex}
   .topbar{padding:13px 16px;gap:12px}
   .notif-panel{width:calc(100vw - 32px);right:-8px}
+  .user-panel{width:calc(100vw - 32px);right:-8px}
   .content{padding:20px 16px 32px}
   .ronda-grid{grid-template-columns:1fr}
   .page-head h1{font-size:22px}
@@ -550,6 +566,25 @@ tbody tr:hover{background:#FBFAF5}
           <div id="notifList"><div class="notif-empty">Memuat...</div></div>
         </div>
       </div>
+
+      <div class="user-wrap">
+        <button class="user-btn" type="button" id="userBtn" title="{{ $u->name }}">
+          <span class="user-av-mini">{{ $inisial }}</span>
+        </button>
+        <div class="user-panel" id="userPanel">
+          <div class="user-panel-top">
+            <div class="user-av-lg">{{ $inisial }}</div>
+            <div style="min-width:0">
+              <div class="user-panel-name">{{ $u->name }}</div>
+              <div class="user-panel-role">{{ $roleLabel }}</div>
+            </div>
+          </div>
+          <button class="user-panel-logout" type="button" onclick="userPanelClose();openLogout()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Keluar
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="content">
@@ -756,6 +791,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
   btn.addEventListener('click', function(e){
     e.stopPropagation();
+    // Tutup user panel jika terbuka
+    document.getElementById('userPanel')?.classList.remove('show');
     panel.classList.toggle('show');
     if (panel.classList.contains('show')) loadNotif();
   });
@@ -769,6 +806,30 @@ document.addEventListener('DOMContentLoaded', function(){
   // Muat badge saat halaman terbuka
   loadNotif();
 })();
+
+// ── User avatar dropdown ──
+(function(){
+  var userBtn   = document.getElementById('userBtn');
+  var userPanel = document.getElementById('userPanel');
+  if (!userBtn || !userPanel) return;
+
+  userBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    // Tutup notif panel jika terbuka
+    document.getElementById('notifPanel')?.classList.remove('show');
+    userPanel.classList.toggle('show');
+  });
+
+  document.addEventListener('click', function(e){
+    if (!userPanel.contains(e.target) && e.target !== userBtn) {
+      userPanel.classList.remove('show');
+    }
+  });
+})();
+
+function userPanelClose(){
+  document.getElementById('userPanel')?.classList.remove('show');
+}
 </script>
 </body>
 </html>
