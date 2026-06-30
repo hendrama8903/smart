@@ -155,7 +155,31 @@ a{color:inherit;text-decoration:none}
 .search input{border:none;outline:none;font-family:inherit;font-size:13px;width:100%;background:none;color:var(--tinta)}
 .search input::placeholder{color:#9AA89F}
 .topbtn{width:38px;height:38px;border-radius:10px;background:var(--surface);border:1px solid var(--garis);display:flex;align-items:center;justify-content:center;color:var(--hutan);position:relative}
-.topbtn .dot{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--stempel);border:1.5px solid var(--kertas)}
+.topbtn .dot{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--stempel);border:1.5px solid var(--kertas);display:none}
+.notif-wrap{position:relative;margin-left:auto}
+.notif-badge-count{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--stempel);color:#fff;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;border:2px solid var(--kertas);z-index:2}
+.notif-panel{position:absolute;top:calc(100% + 10px);right:0;width:320px;background:#fff;border:1px solid var(--garis);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:200;display:none;overflow:hidden}
+.notif-panel.show{display:block;animation:fade .18s ease}
+.notif-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--garis)}
+.notif-head>span{font-size:14px;font-weight:700;color:var(--tinta);display:flex;align-items:center;gap:6px}
+.notif-head-count{font-size:11px;font-weight:600;color:#fff;background:var(--daun);border-radius:10px;padding:2px 8px}
+.notif-baca-semua{font-size:11px;color:var(--daun);font-weight:600;background:none;border:none;cursor:pointer;padding:0;white-space:nowrap}
+.notif-baca-semua:hover{text-decoration:underline}
+.notif-empty{padding:32px 16px;text-align:center;color:var(--redup);font-size:13px}
+.notif-list{max-height:360px;overflow-y:auto}
+.notif-item{display:flex;gap:11px;padding:11px 16px;border-bottom:1px solid var(--garis);text-decoration:none;color:inherit;transition:background .15s}
+.notif-item:last-child{border-bottom:none}
+.notif-item:hover{background:var(--surface)}
+.notif-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.notif-icon.pengumuman{background:#e8f5e9;color:#388e3c}
+.notif-icon.iuran{background:#fff3e0;color:#e65100}
+.notif-icon.booking{background:#e3f2fd;color:#1565c0}
+.notif-icon.piutang{background:#fce4ec;color:#c62828}
+.notif-body{flex:1;min-width:0}
+.notif-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--redup);margin-bottom:2px}
+.notif-judul{font-size:13px;font-weight:600;color:var(--tinta);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notif-item.penting .notif-judul{color:var(--stempel)}
+.notif-waktu{font-size:11px;color:var(--redup);margin-top:2px}
 
 .content{padding:28px 32px 56px;max-width:1180px;width:100%}
 .page{display:none;animation:fade .25s ease}
@@ -271,8 +295,6 @@ tbody tr:hover{background:#FBFAF5}
 /* mobile overlay */
 .scrim{display:none}
 
-/* ===== bottom nav (mobile) ===== */
-.botnav{display:none}
 
 @media(max-width:920px){
   .stats{grid-template-columns:repeat(2,1fr)}
@@ -286,27 +308,12 @@ tbody tr:hover{background:#FBFAF5}
   .scrim.show{display:block;position:fixed;inset:0;background:rgba(20,30,24,.45);z-index:50}
   .menu-btn{display:flex}
   .topbar{padding:13px 16px;gap:12px}
-  .content{padding:20px 16px 96px}     /* ruang untuk bottom nav */
+  .notif-panel{width:calc(100vw - 32px);right:-8px}
+  .content{padding:20px 16px 32px}
   .ronda-grid{grid-template-columns:1fr}
   .page-head h1{font-size:22px}
   .page-head p{font-size:13.5px}
 
-  /* tampilkan bottom nav */
-  .botnav{
-    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:55;
-    background:rgba(255,255,255,.94);backdrop-filter:blur(12px);
-    border-top:1px solid var(--garis);
-    padding:7px 6px calc(7px + env(safe-area-inset-bottom));
-    box-shadow:0 -6px 20px -12px rgba(20,40,30,.3);
-  }
-  .botnav button,.botnav a{
-    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-    padding:5px 2px;color:var(--redup);font-size:10.5px;font-weight:700;border-radius:10px;
-  }
-  .botnav button svg,.botnav a svg{width:21px;height:21px;stroke-width:2}
-  .botnav button.on,.botnav a.on{color:var(--hutan)}
-  .botnav button.on svg,.botnav a.on svg{stroke-width:2.4}
-  .botnav button:active,.botnav a:active{background:var(--kertas-2)}
 
   /* sidebar foot lebih lega di drawer */
   .topbtn{width:40px;height:40px}
@@ -332,6 +339,11 @@ tbody tr:hover{background:#FBFAF5}
   /* ── Mobile: toolbar wrap ── */
   .keu-toolbar,.wg-toolbar,.ut-toolbar,.pg-toolbar{flex-direction:column;align-items:flex-start !important}
   .keu-actions,.wg-actions,.ut-actions,.pg-actions{flex-wrap:wrap;width:100%}
+
+  /* ── Mobile: tombol toolbar — icon only, kotak kompak seperti Master Role ── */
+  .btn{font-size:0;gap:0;padding:0;min-width:unset !important;width:46px;height:46px;
+       border-radius:12px;justify-content:center;flex:0 0 46px !important}
+  .btn .ic{width:18px;height:18px;flex-shrink:0}
 
   /* ── Mobile: modal full width ── */
   .modal-overlay{padding:0;align-items:flex-end}
@@ -524,7 +536,19 @@ tbody tr:hover{background:#FBFAF5}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <div class="crumb">SMART &nbsp;/&nbsp; <b id="crumb">@yield('judul','Dashboard')</b></div>
-      <button class="topbtn" type="button" style="margin-left:auto"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot"></span></button>
+      <div class="notif-wrap">
+        <button class="topbtn" type="button" id="notifBtn" title="Notifikasi">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        </button>
+        <span class="notif-badge-count" id="notifBadge"></span>
+        <div class="notif-panel" id="notifPanel">
+          <div class="notif-head">
+            <span>Notifikasi <span class="notif-head-count" id="notifHeadCount" style="display:none"></span></span>
+            <button class="notif-baca-semua" id="notifBacaSemua" type="button">Tandai semua dibaca</button>
+          </div>
+          <div id="notifList"><div class="notif-empty">Memuat...</div></div>
+        </div>
+      </div>
     </div>
 
     <div class="content">
@@ -533,34 +557,6 @@ tbody tr:hover{background:#FBFAF5}
   </main>
 </div>
 
-<nav class="botnav" id="botnav">
-  <a class="{{ request()->routeIs('dashboard') ? 'on' : '' }}" href="{{ route('dashboard') }}">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
-    <span>Beranda</span>
-  </a>
-  @if($u->hasRole('admin','ketua','bendahara'))
-  <a href="#" onclick="return false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-    <span>Iuran</span>
-  </a>
-  @endif
-  @if($u->hasRole('admin','ketua','sekretaris'))
-  <a href="#" onclick="return false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
-    <span>Pendopo</span>
-  </a>
-  @endif
-  @if($u->hasRole('admin','ketua','bendahara'))
-  <a href="#" onclick="return false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-    <span>Kas</span>
-  </a>
-  @endif
-  <button class="more" type="button" onclick="toggleNav(true)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    <span>Lainnya</span>
-  </button>
-</nav>
 
 <script>
 function toggleGroup(h){ h.closest('.tree-group').classList.toggle('open'); }
@@ -661,6 +657,117 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLogout(); })
 window.addEventListener('pageshow', function(e){
   if (e.persisted) { window.location.reload(); }
 });
+
+// Auto-tooltip: ambil teks tombol .btn dan jadikan title untuk hover keterangan
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.btn').forEach(function(btn){
+    if (btn.title) return;
+    var text = Array.from(btn.childNodes)
+      .filter(function(n){ return n.nodeType === 3; })
+      .map(function(n){ return n.textContent.trim(); })
+      .filter(Boolean).join(' ');
+    if (text) btn.title = text;
+  });
+});
+
+// ── Notifikasi ──
+(function(){
+  var btn    = document.getElementById('notifBtn');
+  var panel  = document.getElementById('notifPanel');
+  var badge  = document.getElementById('notifBadge');
+  var list   = document.getElementById('notifList');
+  var hcount = document.getElementById('notifHeadCount');
+  var csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+  var icons = {
+    pengumuman: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+    iuran:      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
+    booking:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+    piutang:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+  };
+
+  function postJson(url) {
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
+    });
+  }
+
+  function updateBadge(total) {
+    if (total > 0) {
+      badge.textContent = total > 9 ? '9+' : total;
+      badge.style.display = 'flex';
+      hcount.textContent = total + ' belum dibaca';
+      hcount.style.display = '';
+    } else {
+      badge.style.display = 'none';
+      hcount.style.display = 'none';
+    }
+  }
+
+  function renderList(items) {
+    if (!items || items.length === 0) {
+      list.innerHTML = '<div class="notif-empty">Semua notifikasi sudah dibaca</div>';
+      return;
+    }
+    var html = '';
+    items.forEach(function(item){
+      html += '<a href="' + item.url + '" class="notif-item' + (item.penting ? ' penting' : '') + '" data-id="' + item.id + '">'
+        + '<div class="notif-icon ' + item.type + '">' + (icons[item.type] || '') + '</div>'
+        + '<div class="notif-body">'
+        + '<div class="notif-label">' + item.label + '</div>'
+        + '<div class="notif-judul">' + item.judul + '</div>'
+        + '<div class="notif-waktu">' + item.dibuat + '</div>'
+        + '</div></a>';
+    });
+    list.innerHTML = html;
+
+    // Klik item → mark as read lalu navigasi
+    list.querySelectorAll('.notif-item[data-id]').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.preventDefault();
+        var id  = el.dataset.id;
+        var url = el.getAttribute('href');
+        postJson('{{ url("/notifikasi") }}/' + id + '/baca').finally(function(){
+          window.location.href = url;
+        });
+      });
+    });
+  }
+
+  function loadNotif() {
+    fetch('{{ route("notifikasi.data") }}', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        updateBadge(res.total || 0);
+        renderList(res.items);
+      })
+      .catch(function(){ list.innerHTML = '<div class="notif-empty">Gagal memuat notifikasi</div>'; });
+  }
+
+  // Tombol "Tandai semua dibaca"
+  document.getElementById('notifBacaSemua')?.addEventListener('click', function(){
+    postJson('{{ route("notifikasi.baca-semua") }}').then(function(){
+      updateBadge(0);
+      list.innerHTML = '<div class="notif-empty">Semua notifikasi sudah dibaca</div>';
+    });
+  });
+
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    panel.classList.toggle('show');
+    if (panel.classList.contains('show')) loadNotif();
+  });
+
+  document.addEventListener('click', function(e){
+    if (!panel.contains(e.target) && e.target !== btn) {
+      panel.classList.remove('show');
+    }
+  });
+
+  // Muat badge saat halaman terbuka
+  loadNotif();
+})();
 </script>
 </body>
 </html>

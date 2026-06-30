@@ -169,7 +169,7 @@
 .sum-sub{font-size:11px;color:var(--redup);margin-top:3px}
 
 /* Grid */
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
 #gridIuran,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridIuran .dx-datagrid{border:none;color:var(--tinta)}
 #gridIuran .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -215,6 +215,12 @@
 
 @media(max-width:900px){.iuran-summary{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.iuran-summary{grid-template-columns:1fr}}
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -314,7 +320,8 @@ function initGrid(){
     }),
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%", height:"100%",
-    columnAutoWidth:true,
+    columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     headerFilter:{visible:true},
     paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},

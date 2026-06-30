@@ -49,7 +49,7 @@
   <button class="mut-tab" onclick="switchTab(this,'tabPindah')">Pindah (<span id="cPindah">0</span>)</button>
   <button class="mut-tab" onclick="switchTab(this,'tabMeninggal')">Meninggal (<span id="cMeninggal">0</span>)</button>
 </div>
-<div style="background:var(--surface);border:1px solid var(--garis);border-radius:0 0 14px 14px;overflow:hidden;box-shadow:var(--shadow);min-height:200px">
+<div style="background:var(--surface);border:1px solid var(--garis);border-radius:0 0 14px 14px;overflow:auto;box-shadow:var(--shadow);min-height:200px">
   <div id="tabMasuk"><div id="gridMasuk"></div></div>
   <div id="tabPindah" style="display:none"><div id="gridPindah"></div></div>
   <div id="tabMeninggal" style="display:none"><div id="gridMeninggal"></div></div>
@@ -68,6 +68,9 @@
 .dx-data-row>td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--garis);border-right:1px solid var(--garis)}
 .dx-pager{background:var(--kertas);border-top:1px solid var(--garis);padding:8px 14px}
 .dx-toolbar{display:none}
+@media(max-width:640px){
+  .mut-tab{font-size:12px;padding:8px 6px}
+}
 </style>
 @endpush
 @push('scripts')
@@ -97,7 +100,7 @@ $(function(){
   $("#filterTahun").dxSelectBox({dataSource:yOpts,valueExpr:'id',displayExpr:'l',value:curTahun,width:100,onValueChanged:function(e){curTahun=e.value;loadData();}});
   $("#filterBulan").dxSelectBox({dataSource:bOpts,valueExpr:'id',displayExpr:'l',value:null,width:130,onValueChanged:function(e){curBulan=e.value;loadData();}});
 
-  var mkGrid=function(id){return $("#"+id).dxDataGrid({dataSource:[],showBorders:false,showColumnLines:true,showRowLines:true,rowAlternationEnabled:true,width:"100%",filterRow:{visible:false},paging:{pageSize:50},pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},columns:colDef}).dxDataGrid("instance");};
+  var mkGrid=function(id){return $("#"+id).dxDataGrid({dataSource:[],showBorders:false,showColumnLines:true,showRowLines:true,rowAlternationEnabled:true,width:"100%",columnAutoWidth:false,scrolling:{useNative:true,showScrollbar:'always',mode:'standard'},filterRow:{visible:false},paging:{pageSize:50},pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},columns:colDef}).dxDataGrid("instance");};
   g1=mkGrid("gridMasuk"); g2=mkGrid("gridPindah"); g3=mkGrid("gridMeninggal");
   loadData();
 });

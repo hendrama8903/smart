@@ -118,7 +118,7 @@
 .mk-info-actions{flex-shrink:0}
 
 /* Grid */
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
 #gridAnggota,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridAnggota .dx-datagrid{border:none;color:var(--tinta)}
 #gridAnggota .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -152,6 +152,12 @@
 .mk-modal-foot .mbtn{flex:0 0 auto}
 .mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
 .mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
+@media(max-width:640px){
+  .mk-info-card{flex-direction:column;align-items:stretch;gap:10px}
+  .mk-info-name{font-size:18px;white-space:normal}
+  .mk-info-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -173,6 +179,7 @@ $(function(){
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%", height:"100%",
     columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},
     columns:[

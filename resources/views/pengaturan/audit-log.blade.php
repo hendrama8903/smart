@@ -55,7 +55,7 @@
 .at-info{display:flex;align-items:center;gap:8px;padding:9px 13px;background:var(--biru-soft);border-radius:9px;font-size:12.5px;color:#1a3d52;margin-bottom:12px}
 .at-info svg{flex:0 0 14px}
 
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
 #gridAudit,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridAudit .dx-datagrid{border:none;color:var(--tinta)}
 #gridAudit .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -88,6 +88,12 @@
 .keu-head-icon svg{width:17px;height:17px}
 .keu-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
 .keu-sub{font-size:12px;color:var(--redup);margin:0}
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -126,7 +132,8 @@ $(function(){
 
   grid=$("#gridAudit").dxDataGrid({
     dataSource:[],showBorders:false,showColumnLines:true,showRowLines:true,
-    rowAlternationEnabled:true,width:"100%",height:"100%",columnAutoWidth:true,
+    rowAlternationEnabled:true,width:"100%",height:"100%",columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{visible:false},
     paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,100,"all"],showInfo:true},

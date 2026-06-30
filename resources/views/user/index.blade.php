@@ -139,7 +139,7 @@
 /* ── Grid container ───────────────────────── */
 .grid-wrap {
   background: var(--surface); border: 1px solid var(--garis);
-  border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
+  border-radius: var(--radius); overflow: auto; box-shadow: var(--shadow);
   height: calc(100vh - 162px);
 }
 
@@ -265,6 +265,12 @@
   .ff2 { grid-template-columns: 1fr }
   .uf-card { margin: 12px }
 }
+@media(max-width:640px){
+  .user-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .ut-title{font-size:18px;white-space:normal}
+  .ut-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -309,6 +315,7 @@ $(function () {
     width: "100%",
     height: "100%",
     columnAutoWidth: false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     wordWrapEnabled: false,
     headerFilter: { visible: true },
     paging: { pageSize: 50 },

@@ -127,22 +127,30 @@
 /* ── Toolbar ──────────────────────────────── */
 .menu-toolbar {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 18px; gap: 16px;
+  margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
 }
 .mt-title {
-  font-size: 24px; font-weight: 800; letter-spacing: -.02em; color: var(--tinta);
-  margin: 0; line-height: 1.2;
+  font-size: 20px; font-weight: 800; letter-spacing: -.02em; color: var(--tinta);
+  margin: 0; line-height: 1.2; white-space: nowrap;
 }
-.mt-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0 }
+.mt-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; flex-wrap: wrap }
+.mt-actions .btn { min-width: 100px; justify-content: center }
+
+@media (max-width: 640px) {
+  .menu-toolbar { flex-direction: column; align-items: stretch; gap: 10px }
+  .mt-title { font-size: 18px; white-space: normal }
+  .mt-actions { display: flex; flex-wrap: wrap; gap: 8px }
+  .grid-wrap { height: calc(100vh - 200px) }
+}
 
 /* ── Grid container ───────────────────────── */
 .grid-wrap {
   background: var(--surface);
   border: 1px solid var(--garis);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow: auto;
   box-shadow: var(--shadow);
-  height: calc(100vh - 162px);
+  height: calc(100vh - 150px);
 }
 
 /* ── Button variants ──────────────────────── */
@@ -261,12 +269,11 @@
 .mf-head h3 { font-size: 15px; font-weight: 800; margin: 0 0 1px }
 .mf-sub { font-size: 12px; color: var(--redup); margin: 0 }
 
-.mf-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 0 }
+.mf-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 0 }
 
-/* reuse existing ff / ff2 from original */
-.ff { margin-bottom: 13px; display: flex; flex-direction: column }
-.ff > label { font-size: 12px; font-weight: 700; margin-bottom: 5px; color: var(--redup) }
-.ff2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
+.ff { margin-bottom: 10px; display: flex; flex-direction: column }
+.ff > label { font-size: 12px; font-weight: 700; margin-bottom: 4px; color: var(--redup) }
+.ff2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
 .req { color: var(--stempel) }
 .hint { font-size: 11px; color: #9aa89f; font-weight: 500 }
 
@@ -302,8 +309,8 @@
 .mbtn-save svg { width: 14px; height: 14px }
 
 @media (max-width: 600px) {
-  .ff2 { grid-template-columns: 1fr }
   .mf-card { margin: 12px }
+  .mf-body { padding: 14px 16px }
 }
 </style>
 @endpush
@@ -354,6 +361,7 @@ $(function () {
     showColumnLines: false,
     showRowLines: true,
     rowAlternationEnabled: false,
+    scrolling: { useNative: true, showScrollbar: 'onHover', mode: 'standard' },
     width: "100%",
     height: "100%",
     columnAutoWidth: false,

@@ -17,7 +17,7 @@
   </div>
 </div>
 
-<div class="grid-wrap" style="height:calc(100vh - 130px)"><div id="gridFasilitas"></div></div>
+<div class="grid-wrap"><div id="gridFasilitas"></div></div>
 
 {{-- Modal Fasilitas --}}
 <div class="modal-overlay" id="fasilitasModal">
@@ -105,13 +105,30 @@
 @push('styles')
 <style>
 .content{max-width:none;padding-bottom:0}
-.keu-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:16px}
-.keu-title{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--tinta);margin:0}
-.keu-actions{display:flex;gap:8px}
+
+/* ── Toolbar ── */
+.keu-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+.keu-title{font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--tinta);margin:0;white-space:nowrap}
+.keu-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.keu-actions .btn{min-width:100px;justify-content:center}
 .btn-ubah{background:var(--emas)!important;color:#fff!important}.btn-ubah:hover{filter:brightness(1.08)}
 .btn-hapus{background:var(--stempel)!important;color:#fff!important}.btn-hapus:hover{filter:brightness(1.08)}
 .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none}
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+
+/* ── Grid wrap ── */
+.grid-wrap{
+  background:var(--surface);border:1px solid var(--garis);
+  border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow);
+  height:calc(100vh - 140px);
+}
+
+/* ── Responsive ── */
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 #gridFasilitas,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridFasilitas .dx-datagrid{border:none;color:var(--tinta)}
 #gridFasilitas .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -149,10 +166,10 @@
 .keu-head-icon svg{width:17px;height:17px}
 .keu-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
 .keu-sub{font-size:12px;color:var(--redup);margin:0}
-.keu-body{padding:18px 20px;display:flex;flex-direction:column;gap:0}
-.ff{margin-bottom:13px;display:flex;flex-direction:column}
-.ff>label{font-size:12px;font-weight:700;margin-bottom:5px;color:var(--redup)}
-.ff2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.keu-body{padding:16px 20px;display:flex;flex-direction:column;gap:0}
+.ff{margin-bottom:10px;display:flex;flex-direction:column}
+.ff>label{font-size:12px;font-weight:700;margin-bottom:4px;color:var(--redup)}
+.ff2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .hint{font-size:11px;color:#9aa89f;font-weight:500}.req{color:var(--stempel)}
 .mf-switch{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--kertas);border:1px solid var(--garis);border-radius:9px}
 .tarif-check{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--redup);padding:8px 0}
@@ -188,6 +205,7 @@ $(function(){
     showBorders:false,showColumnLines:true,showRowLines:true,
     rowAlternationEnabled:true,width:"100%",height:"100%",
     columnAutoWidth:true,focusedRowEnabled:true,
+    scrolling:{useNative:true,showScrollbar:'onHover',mode:'standard'},
     onFocusedRowChanged:e=>{focusedRow=e.row?e.row.data:null;},
     paging:{enabled:false},
     masterDetail:{enabled:true,template:function(c,info){buildTarifPanel(c,info.data);}},
@@ -233,6 +251,7 @@ function buildTarifPanel(container, fas){
     dataSource:new DevExpress.data.CustomStore({key:"id",load:()=>$.getJSON(urlTList+'/'+fas.id)}),
     showBorders:true,showColumnLines:true,showRowLines:true,
     rowAlternationEnabled:true,width:"100%",
+    scrolling:{useNative:true,showScrollbar:'onHover'},
     paging:{enabled:false},
     columns:[
       {dataField:"nama_tarif",caption:"Nama Tarif",minWidth:150,

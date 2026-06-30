@@ -241,7 +241,13 @@
 .wg-actions { display:flex;gap:8px;align-items:center;flex-shrink:0 }
 
 /* Grid */
-.grid-wrap { background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);height:calc(100vh - 162px) }
+.grid-wrap { background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow);height:calc(100vh - 148px) }
+@media(max-width:640px){
+  .wg-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .wg-title{font-size:18px}
+  .wg-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 200px)}
+}
 
 /* Buttons */
 .btn-ubah  { background:var(--emas) !important;color:#fff !important }
@@ -447,7 +453,8 @@ $(function() {
     dataSource: new DevExpress.data.CustomStore({ key:"id", load: () => $.getJSON(urlKKList) }),
     showBorders: false, showColumnLines: true, showRowLines: true,
     rowAlternationEnabled: true, width:"100%", height:"100%",
-    columnAutoWidth: true, wordWrapEnabled: false,
+    columnAutoWidth: false, wordWrapEnabled: false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     headerFilter: { visible: true },
     paging: { pageSize: 50 },
     pager: { visible:true, displayMode:"compact", showPageSizeSelector:true, allowedPageSizes:[25,50,"all"], showInfo:true, showNavigationButtons:true },
@@ -476,7 +483,7 @@ $(function() {
         }
       },
       {
-        dataField:"kepala_keluarga", caption:"Kepala Keluarga", minWidth:190,
+        dataField:"kepala_keluarga", caption:"Kepala Keluarga", width:200,
         cellTemplate: function(c, o) {
           var wrap = $('<div>');
           $('<div style="font-weight:600;font-size:13.5px">').text(o.value || '—').appendTo(wrap);
@@ -501,7 +508,7 @@ $(function() {
         }
       },
       {
-        dataField:"alamat", caption:"Alamat", minWidth:160,
+        dataField:"alamat", caption:"Alamat", width:180,
         cellTemplate: function(c, o) {
           $('<span style="font-size:12.5px;color:var(--redup)">').text(o.value || '—').appendTo(c);
         }

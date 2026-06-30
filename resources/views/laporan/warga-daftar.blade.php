@@ -18,11 +18,21 @@
   </div>
 </div>
 
-<div style="background:var(--surface);border:1px solid var(--garis);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);height:calc(100vh - 160px)">
+<div style="background:var(--surface);border:1px solid var(--garis);border-radius:14px;overflow:auto;box-shadow:var(--shadow);height:calc(100vh - 160px)">
   <div id="gridDaftarWarga"></div>
 </div>
 
 @endsection
+@push('styles')
+<style>
+.content{max-width:none;padding-bottom:0}
+@media(max-width:640px){
+  .wdaftar-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .wdaftar-title{font-size:18px;white-space:normal}
+  .wdaftar-actions{display:flex;flex-wrap:wrap;gap:8px}
+}
+</style>
+@endpush
 @push('scripts')
 <script src="{{ asset('js/devextreme/exceljs.min.js') }}"></script>
 <script src="{{ asset('js/devextreme/FileSaver.min.js') }}"></script>
@@ -54,7 +64,8 @@ $(function(){
 
   grid=$("#gridDaftarWarga").dxDataGrid({
     dataSource:[],showBorders:false,showColumnLines:true,showRowLines:true,
-    rowAlternationEnabled:true,width:"100%",height:"100%",columnAutoWidth:true,
+    rowAlternationEnabled:true,width:"100%",height:"100%",columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{visible:false},
     paging:{pageSize:100},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[50,100,"all"],showInfo:true},

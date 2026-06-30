@@ -115,7 +115,7 @@
 .sum-sub{font-size:11px;color:var(--redup);margin-top:3px}
 
 /* Grid */
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
 #gridKas,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridKas .dx-datagrid{border:none;color:var(--tinta)}
 #gridKas .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -154,6 +154,12 @@
 .bukti-preview{flex:0 0 52px;width:52px;height:52px;border-radius:9px;background:var(--kertas-2);border:1.5px solid var(--garis);display:flex;align-items:center;justify-content:center;color:var(--redup);overflow:hidden}
 .bukti-preview img{width:100%;height:100%;object-fit:cover}
 @media(max-width:900px){.kas-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -215,7 +221,9 @@ $(function(){
     }),
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%", height:"100%",
-    columnAutoWidth:true, focusedRowEnabled:true,
+    columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
+    focusedRowEnabled:true,
     onFocusedRowChanged:e=>{focusedRow=e.row?e.row.data:null;},
     headerFilter:{visible:true},
     paging:{pageSize:50},

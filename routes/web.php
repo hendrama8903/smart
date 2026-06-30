@@ -18,6 +18,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/notifikasi/data',         [\App\Http\Controllers\NotifikasiController::class, 'data'])->name('notifikasi.data');
+    Route::post('/notifikasi/baca-semua',  [\App\Http\Controllers\NotifikasiController::class, 'bacaSemua'])->name('notifikasi.baca-semua');
+    Route::post('/notifikasi/{id}/baca',   [\App\Http\Controllers\NotifikasiController::class, 'baca'])->name('notifikasi.baca');
 
     // ====== Contoh route khusus PENGURUS (RBAC) — diisi di langkah berikutnya ======
     Route::middleware('role:admin,ketua,sekretaris,bendahara')->group(function () {

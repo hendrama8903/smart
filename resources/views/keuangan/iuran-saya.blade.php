@@ -85,7 +85,7 @@
 .is-sub{font-size:11.5px;color:var(--redup);margin-top:4px}
 
 /* Grid */
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
 #gridIuranSaya,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridIuranSaya .dx-datagrid{border:none;color:var(--tinta)}
 #gridIuranSaya .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -103,6 +103,12 @@
 
 @media(max-width:900px){.is-summary{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.is-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){
+  .is-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .is-title{font-size:18px;white-space:normal}
+  .is-filters{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -147,7 +153,8 @@ $(function(){
     }),
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%", height:"100%",
-    columnAutoWidth:true,
+    columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{ visible:false }, // filter dilakukan via dropdown di atas
     paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},

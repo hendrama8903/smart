@@ -99,7 +99,7 @@
 .btn-ubah{background:var(--emas)!important;color:#fff!important}.btn-ubah:hover{filter:brightness(1.08)}
 .btn-hapus{background:var(--stempel)!important;color:#fff!important}.btn-hapus:hover{filter:brightness(1.08)}
 .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none}
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
 #gridAnggaran,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridAnggaran .dx-datagrid{border:none;color:var(--tinta)}
 #gridAnggaran .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -125,6 +125,12 @@
 .keu-foot .mbtn{flex:0 0 auto}
 .mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
 .mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -159,7 +165,9 @@ $(function(){
     dataSource: new DevExpress.data.CustomStore({key:"id", load:()=>$.getJSON(urlList,{tahun:curTahun})}),
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%", height:"100%",
-    columnAutoWidth:true, focusedRowEnabled:true,
+    columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
+    focusedRowEnabled:true,
     onFocusedRowChanged:e=>{focusedRow=e.row?e.row.data:null;},
     paging:{enabled:false},
     columns:[

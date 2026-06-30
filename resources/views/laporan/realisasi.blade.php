@@ -85,7 +85,7 @@
 .rv-pct{font-size:11.5px;font-weight:700;color:var(--redup);margin-top:3px}
 
 /* Table */
-.rv-section{background:var(--surface);border:1px solid var(--garis);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.rv-section{background:var(--surface);border:1px solid var(--garis);border-radius:14px;overflow:auto;box-shadow:var(--shadow)}
 .rv-section-head{padding:13px 18px;border-bottom:1px solid var(--garis);font-size:13px;font-weight:700;background:var(--kertas-2)}
 #gridRealisasi,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridRealisasi .dx-datagrid{border:none}
@@ -112,6 +112,11 @@
 .tipe-masuk{display:inline-flex;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--daun-pucat);color:#14532D}
 .tipe-keluar{display:inline-flex;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--stempel-soft);color:#9A3422}
 @media(max-width:900px){.rv-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){
+  .rv-summary{grid-template-columns:1fr 1fr}
+  .rv-section{overflow:auto}
+  .btn-unduh{flex-wrap:wrap}
+}
 </style>
 @endpush
 
@@ -138,6 +143,8 @@ $(function(){
     dataSource:[],
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%",
+    columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{visible:false},
     paging:{enabled:false},
     columns:[

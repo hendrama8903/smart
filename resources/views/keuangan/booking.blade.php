@@ -130,7 +130,7 @@
 .sum-lbl{font-size:11.5px;color:var(--redup);font-weight:600;margin-bottom:6px}
 .sum-val{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--tinta)}
 .sum-sub{font-size:11px;color:var(--redup);margin-top:3px}
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
 #gridBooking,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridBooking .dx-datagrid{border:none;color:var(--tinta)}
 #gridBooking .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -179,6 +179,12 @@
 .mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
 .mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
 @media(max-width:900px){.iuran-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -230,7 +236,8 @@ $(function(){
     }),
     showBorders:false,showColumnLines:true,showRowLines:true,
     rowAlternationEnabled:true,width:"100%",height:"100%",
-    columnAutoWidth:true,
+    columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     headerFilter:{visible:true},
     paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},

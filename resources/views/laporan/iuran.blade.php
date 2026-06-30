@@ -63,6 +63,9 @@
 #gridTunggakan .dx-data-row>td,#gridRekap .dx-data-row>td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--garis);border-right:1px solid var(--garis)}
 #gridTunggakan .dx-pager,#gridRekap .dx-pager{background:var(--kertas);border-top:1px solid var(--garis);padding:8px 14px}
 #gridTunggakan .dx-toolbar,#gridRekap .dx-toolbar{display:none}
+@media(max-width:640px){
+  .rv-section{overflow:auto}
+}
 </style>
 @endpush
 @push('scripts')
@@ -84,6 +87,8 @@ $(function(){
 
   g1=$("#gridTunggakan").dxDataGrid({
     dataSource:[],showBorders:false,showColumnLines:true,showRowLines:true,rowAlternationEnabled:true,width:"100%",
+    columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{visible:false},paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},
     columns:[
@@ -106,6 +111,8 @@ $(function(){
 
   g2=$("#gridRekap").dxDataGrid({
     dataSource:[],showBorders:false,showColumnLines:true,showRowLines:true,rowAlternationEnabled:true,width:"100%",
+    columnAutoWidth:false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{visible:false},paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},
     columns:[
