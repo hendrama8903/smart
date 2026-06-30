@@ -143,7 +143,7 @@
 .pg-file-wrap{display:flex;flex-direction:column;gap:8px}
 .pg-file-current{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--biru-soft);border:1px solid #90CAF9;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--biru)}
 .pg-file-del{background:none;border:none;color:var(--stempel);font-size:18px;cursor:pointer;font-weight:700;line-height:1;padding:0 4px}
-.pg-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 20px 20px}
+.pg-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
 .pg-foot .mbtn{flex:0 0 auto}
 .mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
 .mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}

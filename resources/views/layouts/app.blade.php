@@ -346,9 +346,10 @@ tbody tr:hover{background:#FBFAF5}
   .btn .ic{width:18px;height:18px;flex-shrink:0}
 
   /* ── Mobile: modal full width ── */
-  .modal-overlay{padding:0;align-items:flex-end}
-  .modal-card{border-radius:20px 20px 0 0 !important;max-width:100% !important;width:100% !important}
-  .keu-card,.mk-card,.wg-card,.pg-card,.uf-card,.mf-card{max-width:100% !important;border-radius:20px 20px 0 0 !important}
+  .modal-overlay{padding:12px}
+  .modal-card{border-radius:14px !important;max-width:100% !important;width:100% !important}
+  .keu-card,.mk-card,.wg-card,.pg-card,.uf-card,.mf-card{max-width:100% !important;border-radius:14px !important}
+  .keu-foot,.mk-foot,.wg-foot,.pg-foot,.uf-foot,.mf-foot{border-radius:0 0 14px 14px !important}
 
   /* ── Mobile: form body scroll ── */
   .keu-body,.wg-body,.pg-body,.uf-body{max-height:60vh;overflow-y:auto}
@@ -374,7 +375,7 @@ tbody tr:hover{background:#FBFAF5}
 .modal-overlay{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;
   background:rgba(16,40,28,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .2s}
 .modal-overlay.show{opacity:1;visibility:visible}
-.modal-card{background:#fff;border-radius:20px;max-width:380px;width:100%;padding:30px 28px 24px;text-align:center;
+.modal-card{background:#fff;border-radius:14px;max-width:380px;width:100%;padding:30px 28px 24px;text-align:center;
   box-shadow:0 30px 70px -25px rgba(16,40,28,.5);transform:translateY(12px) scale(.97);transition:transform .22s cubic-bezier(.34,1.4,.5,1)}
 .modal-overlay.show .modal-card{transform:none}
 .modal-ic{width:60px;height:60px;border-radius:50%;background:var(--stempel-soft);color:var(--stempel);

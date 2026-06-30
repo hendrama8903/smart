@@ -38,7 +38,7 @@
     <div style="padding:18px 20px;max-height:70vh;overflow-y:auto">
       <div class="at-detail-grid" id="detailContent"></div>
     </div>
-    <div style="display:flex;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 20px 20px">
+    <div style="display:flex;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px">
       <button class="mbtn ghost" onclick="detailClose()">Tutup</button>
     </div>
   </div>

@@ -5,9 +5,6 @@
 <div class="keu-toolbar">
   <h2 class="keu-title">Iuran Bulanan</h2>
   <div class="keu-actions">
-    <div id="filterPeriode"></div>
-    <div id="filterJenis"></div>
-    <div id="filterGang"></div>
     <button class="btn btn-generate" id="btnGenerate" type="button" onclick="openGenerate()">
       <svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Generate Tagihan
@@ -21,6 +18,11 @@
       Import Tunggakan
     </button>
   </div>
+</div>
+<div class="keu-filters">
+  <div id="filterPeriode"></div>
+  <div id="filterJenis"></div>
+  <div id="filterGang"></div>
 </div>
 
 {{-- Summary Cards --}}
@@ -148,9 +150,10 @@
 @push('styles')
 <style>
 .content{max-width:none;padding-bottom:0}
-.keu-toolbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:16px;flex-wrap:wrap}
+.keu-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:12px;flex-wrap:wrap}
 .keu-title{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--tinta);margin:0}
 .keu-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.keu-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .btn-generate{background:#6366F1!important;color:#fff!important}.btn-generate:hover{filter:brightness(1.08)}
 .btn-unduh{background:var(--biru)!important;color:#fff!important}.btn-unduh:hover{filter:brightness(1.08)}
 .btn-import{background:#B8860B!important;color:#fff!important}.btn-import:hover{filter:brightness(1.08)}
@@ -206,7 +209,7 @@
 .keu-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
 .keu-sub{font-size:12px;color:var(--redup);margin:0}
 .keu-body{padding:18px 20px;display:flex;flex-direction:column;gap:0}
-.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 20px 20px}
+.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
 .keu-foot .mbtn{flex:0 0 auto}
 .mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
 .mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
@@ -216,10 +219,11 @@
 @media(max-width:900px){.iuran-summary{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.iuran-summary{grid-template-columns:1fr}}
 @media(max-width:640px){
-  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
-  .keu-title{font-size:18px;white-space:normal}
-  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
-  .grid-wrap{height:calc(100vh - 210px)}
+  .keu-toolbar{flex-wrap:wrap;gap:8px}
+  .keu-title{font-size:18px;flex:1}
+  .keu-filters{gap:6px}
+  .keu-filters .dx-widget{max-width:calc(50% - 3px)}
+  .grid-wrap{height:calc(100vh - 230px)}
 }
 </style>
 @endpush

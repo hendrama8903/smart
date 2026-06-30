@@ -101,32 +101,6 @@
   @endif
 </div>
 
-{{-- Pengumuman Terbaru --}}
-@if($pengumumanTerbaru->isNotEmpty())
-<div class="db-card" style="margin-top:16px">
-  <div class="db-card-head">
-    <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Pengumuman Terbaru</h3>
-    <a class="db-link" href="{{ route('pengumuman.publik') }}">Lihat semua →</a>
-  </div>
-  <div class="db-card-body">
-    @foreach($pengumumanTerbaru as $pg)
-    <div class="db-pg-item {{ $pg->penting ? 'db-pg-penting' : '' }}">
-      <span class="db-pg-kat db-pg-kat-{{ $pg->kategori }}">{{ $pg->kategori_label }}</span>
-      <div class="db-pg-info">
-        <div class="db-pg-judul">{{ $pg->judul }}@if($pg->penting) 🔴@endif</div>
-        <div class="db-pg-meta">
-          {{ $pg->tanggal?->locale('id')->isoFormat('D MMMM YYYY') }} · {{ optional($pg->pembuat)->name ?? 'Pengurus RT' }}
-          @if($pg->nama_file)
-            · <a href="{{ $pg->file_url }}" target="_blank" style="color:var(--biru);font-weight:700" download>📎 {{ $pg->nama_file }}</a>
-          @endif
-        </div>
-      </div>
-    </div>
-    @endforeach
-  </div>
-</div>
-@endif
-
 {{-- Cashflow chart --}}
 <div class="db-card" style="margin-top:16px">
   <div class="db-card-head">
@@ -185,15 +159,15 @@
 .db-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
 .db-stats-2{grid-template-columns:repeat(3,1fr)}
 .db-grid3{display:grid;grid-template-columns:1fr 1.4fr 1.4fr;gap:14px;margin-bottom:14px}
-.db-stat{background:var(--surface);border:1px solid var(--garis);border-radius:14px;padding:18px 20px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.db-stat{background:var(--surface);border:1px solid var(--garis);border-radius:14px;padding:14px 16px 12px;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .db-stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--daun)}
 .db-stat-emas::before{background:var(--emas)}.db-stat-stempel::before{background:var(--stempel)}.db-stat-biru::before{background:var(--biru)}
-.db-stat-lbl{font-size:12px;color:var(--redup);font-weight:600;display:flex;align-items:center;gap:7px;margin-bottom:10px}
-.db-stat-lbl svg{width:15px;height:15px;color:var(--daun);flex:0 0 15px}
+.db-stat-lbl{font-size:11.5px;color:var(--redup);font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.db-stat-lbl svg{width:14px;height:14px;color:var(--daun);flex:0 0 14px}
 .db-stat-emas .db-stat-lbl svg{color:var(--emas)}.db-stat-stempel .db-stat-lbl svg{color:var(--stempel)}.db-stat-biru .db-stat-lbl svg{color:var(--biru)}
-.db-stat-val{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
-.db-stat-val small{font-size:14px;color:var(--redup);font-weight:600}
-.db-stat-sub{font-size:11.5px;color:var(--redup)}
+.db-stat-val{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.db-stat-val small{font-size:13px;color:var(--redup);font-weight:600}
+.db-stat-sub{font-size:11px;color:var(--redup)}
 .db-up{color:#2D6A4F;font-weight:700}.db-down{color:var(--stempel);font-weight:700}
 
 .db-iuran-card{background:var(--surface);border:1px solid var(--garis);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}

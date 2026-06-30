@@ -38,7 +38,7 @@
       <div class="ff">
         <label>Nama Role <span class="req">*</span></label>
         <div id="r_nama"></div>
-        <div class="fhint" id="namaHint">Hanya huruf kecil dan underscore. Contoh: <code>koordinator</code>, <code>kepala_rw</code>. <strong>Tidak bisa diubah setelah disimpan</strong> — digunakan sebagai kunci sistem.</div>
+        <div class="fhint" id="namaHint" style="display:none"></div>
       </div>
       <div class="ff"><label>Label (tampilan) <span class="req">*</span></label><div id="r_label"></div></div>
       <div class="ff"><label>Keterangan</label><div id="r_keterangan"></div></div>
@@ -152,7 +152,7 @@
 .fhint{font-size:11.5px;color:var(--redup);margin-top:4px}
 .fhint code{background:var(--kertas-2);padding:1px 5px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
 .req{color:var(--stempel)}
-.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 20px 20px}
+.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
 .keu-foot .mbtn{flex:0 0 auto}
 .mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
 .mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
@@ -238,7 +238,7 @@ function roleAdd(){
   var namaTB = $("#r_nama").dxTextBox("instance");
   namaTB.option("value","");
   namaTB.option("disabled",false);
-  document.getElementById('namaHint').innerHTML='Hanya huruf kecil dan underscore. Contoh: <code>koordinator</code>, <code>kepala_rw</code>. <strong>Tidak bisa diubah setelah disimpan</strong> — digunakan sebagai kunci sistem.';
+  document.getElementById('namaHint').style.display='none';
   $("#r_label").dxTextBox("instance").option("value","");
   $("#r_keterangan").dxTextBox("instance").option("value","");
   document.getElementById('roleModal').classList.add('show');
@@ -254,7 +254,9 @@ function roleEdit(){
   var namaTB = $("#r_nama").dxTextBox("instance");
   namaTB.option("value", d.nama||"");
   namaTB.option("disabled", true);
-  document.getElementById('namaHint').innerHTML='<span style="color:var(--emas);font-weight:600">🔒 Nama role tidak dapat diubah — digunakan sebagai kunci sistem di kode PHP. Ubah <strong>Label</strong> untuk mengubah tampilan.</span>';
+  var hint=document.getElementById('namaHint');
+  hint.innerHTML='<span style="color:var(--redup)">🔒 Nama role tidak dapat diubah setelah disimpan.</span>';
+  hint.style.display='';
   $("#r_label").dxTextBox("instance").option("value",d.label||"");
   $("#r_keterangan").dxTextBox("instance").option("value",d.keterangan||"");
   document.getElementById('roleModal').classList.add('show');

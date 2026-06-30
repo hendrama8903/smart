@@ -296,7 +296,7 @@
 .mf-foot {
   display: flex; gap: 10px; justify-content: flex-end;
   padding: 12px 20px; border-top: 1px solid var(--garis);
-  background: var(--kertas); border-radius: 0 0 20px 20px;
+  background: var(--kertas); border-radius: 0 0 14px 14px;
 }
 .mf-foot .mbtn { flex: 0 0 auto }
 .mbtn-save {
