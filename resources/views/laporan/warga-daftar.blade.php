@@ -64,7 +64,7 @@ $(function(){
 
   grid=$("#gridDaftarWarga").dxDataGrid({
     dataSource:[],showBorders:false,showColumnLines:true,showRowLines:true,
-    rowAlternationEnabled:true,width:"100%",height:"100%",columnAutoWidth:false,
+    rowAlternationEnabled:true,width:"100%",height:"100%",columnAutoWidth:true,
     scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{visible:false},
     paging:{pageSize:100},

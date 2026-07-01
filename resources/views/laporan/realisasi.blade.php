@@ -143,7 +143,7 @@ $(function(){
     dataSource:[],
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%",
-    columnAutoWidth:false,
+    columnAutoWidth:true,
     scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{visible:false},
     paging:{enabled:false},

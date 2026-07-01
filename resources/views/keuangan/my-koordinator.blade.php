@@ -59,7 +59,6 @@
       </div>
       <div>
         <h3>Tambah Anggota</h3>
-        <p class="mk-modal-sub">Pilih warga yang menjadi anggota gang Anda</p>
       </div>
     </div>
     <div class="mk-modal-body">
@@ -72,7 +71,7 @@
     <div class="mk-modal-foot">
       <button class="mbtn ghost" onclick="document.getElementById('anggotaModal').classList.remove('show')">Batal</button>
       <button class="mbtn mbtn-save" onclick="simpanAnggota()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Simpan
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan
       </button>
     </div>
   </div>
@@ -118,7 +117,7 @@
 .mk-info-actions{flex-shrink:0}
 
 /* Grid */
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);overflow:auto;box-shadow:var(--shadow)}
 #gridAnggota,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridAnggota .dx-datagrid{border:none;color:var(--tinta)}
 #gridAnggota .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -142,7 +141,6 @@
 .mk-modal-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;background:var(--daun-pucat);color:var(--daun);display:flex;align-items:center;justify-content:center}
 .mk-modal-icon svg{width:17px;height:17px}
 .mk-modal-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
-.mk-modal-sub{font-size:12px;color:var(--redup);margin:0}
 .mk-modal-body{padding:18px 20px}
 .ff{margin-bottom:13px;display:flex;flex-direction:column}
 .ff>label{font-size:12px;font-weight:700;margin-bottom:5px;color:var(--redup)}
@@ -150,8 +148,9 @@
 .req{color:var(--stempel)}
 .mk-modal-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
 .mk-modal-foot .mbtn{flex:0 0 auto}
-.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
-.mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
+.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:13px;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
+.mbtn-save:hover{background:var(--hutan-2)}
+.mbtn-save svg{width:13px;height:13px}
 @media(max-width:640px){
   .mk-info-card{flex-direction:column;align-items:stretch;gap:10px}
   .mk-info-name{font-size:18px;white-space:normal}
@@ -178,7 +177,7 @@ $(function(){
     dataSource: new DevExpress.data.CustomStore({key:"id", load:()=>$.getJSON(urlAnggotaList)}),
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%", height:"100%",
-    columnAutoWidth:false,
+    columnAutoWidth:true,
     scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},

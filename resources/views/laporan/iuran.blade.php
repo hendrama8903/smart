@@ -87,7 +87,7 @@ $(function(){
 
   g1=$("#gridTunggakan").dxDataGrid({
     dataSource:[],showBorders:false,showColumnLines:true,showRowLines:true,rowAlternationEnabled:true,width:"100%",
-    columnAutoWidth:false,
+    columnAutoWidth:true,
     scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{visible:false},paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},
@@ -111,7 +111,7 @@ $(function(){
 
   g2=$("#gridRekap").dxDataGrid({
     dataSource:[],showBorders:false,showColumnLines:true,showRowLines:true,rowAlternationEnabled:true,width:"100%",
-    columnAutoWidth:false,
+    columnAutoWidth:true,
     scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{visible:false},paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Gang;
+use App\Models\IuranAlokasi;
+use App\Models\IuranPembayaran;
+use App\Models\IuranPeriode;
 use App\Models\IuranTagihan;
 use App\Models\JenisIuran;
 use App\Models\Kas;
@@ -10,23 +12,20 @@ use App\Models\KartuKeluarga;
 use App\Models\KasKategori;
 use App\Models\KoordinatorAnggota;
 use App\Models\KoordinatorGang;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class IuranController extends Controller
 {
-    // ─── Helper: filter KK berdasarkan role user yang login ──────────────
+    // ─── Helper: filter KK berdasarkan role ──────────────────────────────
     private function kkFilter(): ?array
     {
         $user = Auth::user();
+        if ($user->hasRole('admin', 'ketua', 'bendahara', 'sekretaris')) return null;
 
-        // Admin, Ketua, Bendahara, Sekretaris → akses semua KK
-        if ($user->hasRole('admin', 'ketua', 'bendahara', 'sekretaris')) {
-            return null;
-        }
-
-        // Koordinator gang → hanya KK anggotanya
         if ($user->warga_id) {
             $koordinator = KoordinatorGang::where('warga_id', $user->warga_id)
                 ->where('aktif', true)->first();
@@ -34,18 +33,12 @@ class IuranController extends Controller
                 return KoordinatorAnggota::where('koordinator_id', $koordinator->id)
                     ->pluck('kartu_keluarga_id')->toArray();
             }
-        }
-
-        // Warga biasa → hanya KK-nya sendiri
-        if ($user->warga_id) {
             $kkId = \App\Models\Warga::find($user->warga_id)?->kartu_keluarga_id;
             return $kkId ? [$kkId] : [];
         }
-
-        return []; // tidak punya akses
+        return [];
     }
 
-    // Apakah user ini koordinator gang?
     private function myKoordinator(): ?KoordinatorGang
     {
         $user = Auth::user();
@@ -54,42 +47,40 @@ class IuranController extends Controller
             ->where('aktif', true)->first();
     }
 
-    // Info context untuk dikirim ke view
-    public function context()
+    public function index()
     {
-        $user = Auth::user();
-        $isAdmin    = $user->hasRole('admin', 'ketua', 'bendahara', 'sekretaris');
+        return view('keuangan.iuran');
+    }
+
+    public function collectMobile()
+    {
+        return view('keuangan.collect-mobile');
+    }
+
+    // ─── Context untuk view ───────────────────────────────────────────────
+    public function context(): JsonResponse
+    {
+        $user        = Auth::user();
+        $isAdmin     = $user->hasRole('admin', 'ketua', 'bendahara', 'sekretaris');
         $koordinator = $this->myKoordinator();
 
         return response()->json([
             'is_admin'       => $isAdmin,
             'is_koordinator' => ! $isAdmin && $koordinator !== null,
             'koordinator'    => $koordinator ? [
-                'id'        => $koordinator->id,
-                'gang'      => optional($koordinator->gang)->nama_gang,
+                'id'   => $koordinator->id,
+                'gang' => optional($koordinator->gang)->nama_gang,
             ] : null,
         ]);
     }
 
-    // ─── Halaman utama iuran ──────────────────────────────────────────────
-    public function index()
-    {
-        return view('keuangan.iuran');
-    }
-
-    // ─── Halaman collect mobile ────────────────────────────────────────────
-    public function collectMobile()
-    {
-        return view('keuangan.collect-mobile');
-    }
-
     // ─── Master Jenis Iuran ────────────────────────────────────────────────
-    public function jenisList()
+    public function jenisList(): JsonResponse
     {
-        return JenisIuran::orderBy('nama')->get();
+        return response()->json(JenisIuran::orderBy('nama')->get());
     }
 
-    public function jenisSave(Request $request)
+    public function jenisSave(Request $request): JsonResponse
     {
         $data = $request->validate([
             'nama'       => ['required', 'string', 'max:100'],
@@ -106,11 +97,10 @@ class IuranController extends Controller
             JenisIuran::create($data);
             $msg = 'Jenis iuran berhasil ditambahkan.';
         }
-
         return response()->json(['ok' => true, 'message' => $msg]);
     }
 
-    public function jenisRemove(Request $request)
+    public function jenisRemove(Request $request): JsonResponse
     {
         $jenis = JenisIuran::withCount('tagihan')->findOrFail($request->id);
         if ($jenis->tagihan_count > 0) {
@@ -120,17 +110,167 @@ class IuranController extends Controller
         return response()->json(['ok' => true, 'message' => 'Jenis iuran berhasil dihapus.']);
     }
 
-    // ─── Daftar tagihan per periode & jenis ───────────────────────────────
-    public function tagihanList(Request $request)
+    // ─── PERIODE: list ────────────────────────────────────────────────────
+    public function periodeList(Request $request): JsonResponse
     {
-        $periode = $request->input('periode', now()->format('Y-m'));
         $jenisId = $request->input('jenis_iuran_id');
-        $gangId  = $request->input('gang_id');
-        $kkIds   = $this->kkFilter(); // null = semua, array = filter KK
 
-        $query = KartuKeluarga::with(['gang', 'iuranTagihan' => function ($q) use ($periode, $jenisId) {
-            $q->where('periode', $periode . '-01');
-            if ($jenisId) $q->where('jenis_iuran_id', $jenisId);
+        $query = IuranPeriode::with('jenisIuran')
+            ->when($jenisId, fn ($q) => $q->where('jenis_iuran_id', $jenisId))
+            ->orderByDesc('tahun')->orderByDesc('bulan');
+
+        return response()->json($query->get()->map(fn ($p) => [
+            'id'               => $p->id,
+            'jenis_iuran_id'   => $p->jenis_iuran_id,
+            'jenis_iuran'      => optional($p->jenisIuran)->nama,
+            'tahun'            => $p->tahun,
+            'bulan'            => $p->bulan,
+            'label'            => $p->label,
+            'status'           => $p->status,
+            'tanggal_buka'     => $p->tanggal_buka?->format('d/m/Y'),
+            'tanggal_tutup'    => $p->tanggal_tutup?->format('d/m/Y'),
+            'snap_total_tagihan'   => (float) $p->snap_total_tagihan,
+            'snap_total_terkumpul' => (float) $p->snap_total_terkumpul,
+            'snap_total_tunggakan' => (float) $p->snap_total_tunggakan,
+        ]));
+    }
+
+    // ─── PERIODE: buka (+ auto-generate tagihan) ──────────────────────────
+    public function bukaPeriode(Request $request): JsonResponse
+    {
+        $request->validate([
+            'jenis_iuran_id' => ['required', 'exists:jenis_iuran,id'],
+            'tahun'          => ['required', 'integer', 'min:2000', 'max:2100'],
+            'bulan'          => ['nullable', 'integer', 'min:1', 'max:12'],
+        ]);
+
+        $jenis   = JenisIuran::findOrFail($request->jenis_iuran_id);
+        $tahun   = (int) $request->tahun;
+        $bulan   = $request->filled('bulan') ? (int) $request->bulan : null;
+
+        // Cek duplikat
+        $exists = IuranPeriode::where('jenis_iuran_id', $jenis->id)
+            ->where('tahun', $tahun)
+            ->where('bulan', $bulan)
+            ->exists();
+
+        if ($exists) {
+            return response()->json(['ok' => false, 'message' => 'Periode ini sudah pernah dibuka.'], 422);
+        }
+
+        /** @var IuranPeriode $periode */
+        $periode = null;
+        $dibuat  = 0;
+
+        DB::transaction(function () use ($jenis, $tahun, $bulan, &$periode, &$dibuat) {
+            /** @var IuranPeriode $p */
+            $p = IuranPeriode::create([
+                'jenis_iuran_id' => $jenis->id,
+                'tahun'          => $tahun,
+                'bulan'          => $bulan,
+                'status'         => 'buka',
+                'tanggal_buka'   => today(),
+                'dibuka_oleh'    => auth()->id(),
+            ]);
+            $periode = $p;
+
+            $periodeDate = $bulan
+                ? \Carbon\Carbon::create($tahun, $bulan, 1)->toDateString()
+                : \Carbon\Carbon::create($tahun, 1, 1)->toDateString();
+
+            $kkList = KartuKeluarga::where('aktif', true)->get();
+
+            foreach ($kkList as $kk) {
+                $exists = IuranTagihan::where('kartu_keluarga_id', $kk->id)
+                    ->where('jenis_iuran_id', $jenis->id)
+                    ->where('periode', $periodeDate)
+                    ->exists();
+
+                if ($exists) continue;
+
+                IuranTagihan::create([
+                    'kartu_keluarga_id' => $kk->id,
+                    'jenis_iuran_id'    => $jenis->id,
+                    'periode_id'        => $p->id,
+                    'periode'           => $periodeDate,
+                    'nominal'           => $jenis->nominal,
+                    'nominal_dibayar'   => 0,
+                    'status'            => 'belum',
+                    'petugas_id'        => auth()->id(),
+                ]);
+                $dibuat++;
+            }
+        });
+
+        return response()->json([
+            'ok'      => true,
+            'message' => "Periode {$periode->label} dibuka. {$dibuat} tagihan berhasil dibuat.",
+            'periode' => ['id' => $periode->id, 'label' => $periode->label],
+        ]);
+    }
+
+    // ─── PERIODE: tutup buku ──────────────────────────────────────────────
+    public function tutupBuku(Request $request): JsonResponse
+    {
+        $request->validate([
+            'periode_id'        => ['required', 'exists:iuran_periode,id'],
+            'catatan_penutupan' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $periode = IuranPeriode::findOrFail($request->periode_id);
+
+        if ($periode->status === 'tutup') {
+            return response()->json(['ok' => false, 'message' => 'Periode ini sudah ditutup.'], 422);
+        }
+
+        DB::transaction(function () use ($periode, $request) {
+            $tagihan = IuranTagihan::where('periode_id', $periode->id)->get();
+
+            $totalTagihan   = $tagihan->sum('nominal');
+            $totalTerkumpul = $tagihan->sum('nominal_dibayar');
+            $totalTunggakan = $tagihan->sum(fn ($t) => $t->sisa);
+
+            // Flag tagihan belum lunas sebagai tunggakan
+            IuranTagihan::where('periode_id', $periode->id)
+                ->whereIn('status', ['belum', 'sebagian'])
+                ->update(['is_tunggakan' => true]);
+
+            $periode->update([
+                'status'               => 'tutup',
+                'tanggal_tutup'        => today(),
+                'ditutup_oleh'         => auth()->id(),
+                'snap_total_tagihan'   => $totalTagihan,
+                'snap_total_terkumpul' => $totalTerkumpul,
+                'snap_total_tunggakan' => $totalTunggakan,
+                'catatan_penutupan'    => $request->catatan_penutupan,
+            ]);
+        });
+
+        return response()->json([
+            'ok'      => true,
+            'message' => "Buku periode {$periode->label} berhasil ditutup.",
+        ]);
+    }
+
+    // ─── Daftar tagihan per periode ───────────────────────────────────────
+    public function tagihanList(Request $request): JsonResponse
+    {
+        $periodeId = $request->input('periode_id');
+        $gangId    = $request->input('gang_id');
+        $kkIds     = $this->kkFilter();
+
+        // Fallback: filter by periode date jika tidak ada periode_id
+        $periodeDate = null;
+        if (! $periodeId && $request->filled('periode')) {
+            $periodeDate = $request->input('periode') . '-01';
+        }
+
+        $query = KartuKeluarga::with(['gang', 'iuranTagihan' => function ($q) use ($periodeId, $periodeDate) {
+            if ($periodeId) {
+                $q->where('periode_id', $periodeId);
+            } elseif ($periodeDate) {
+                $q->where('periode', $periodeDate);
+            }
         }])
         ->where('aktif', true)
         ->when($kkIds !== null, fn ($q) => $q->whereIn('id', $kkIds))
@@ -139,151 +279,180 @@ class IuranController extends Controller
         ->orderByRaw("CAST(no_rumah AS UNSIGNED)")
         ->get();
 
-        return $query->map(function ($kk) use ($jenisId) {
-            $tagihan = $kk->iuranTagihan->when($jenisId, fn ($c) => $c->where('jenis_iuran_id', $jenisId))->first();
+        return response()->json($query->map(function ($kk) {
+            $tagihan = $kk->iuranTagihan->first();
             return [
-                'kk_id'          => $kk->id,
-                'blok_no'        => trim(($kk->blok ? $kk->blok . ' ' : '') . ($kk->no_rumah ?? '')),
-                'kepala_keluarga'=> $kk->kepala_keluarga,
-                'gang'           => optional($kk->gang)->nama_gang,
-                'gang_id'        => $kk->gang_id,
-                'tagihan_id'     => $tagihan?->id,
-                'jenis_iuran_id' => $tagihan?->jenis_iuran_id,
-                'nominal'        => $tagihan ? (float) $tagihan->nominal : 0,
-                'nominal_dibayar'=> $tagihan ? (float) $tagihan->nominal_dibayar : 0,
-                'sisa'           => $tagihan ? (float) $tagihan->sisa : 0,
-                'status'         => $tagihan?->status ?? 'belum',
-                'tanggal_bayar'  => $tagihan?->tanggal_bayar?->format('d/m/Y'),
-                'keterangan'     => $tagihan?->keterangan,
-                'is_keringanan'  => (bool) ($tagihan?->is_keringanan),
-                'catatan_khusus' => $tagihan?->catatan_khusus,
-                'is_historis'    => (bool) ($tagihan?->is_historis),
+                'kk_id'           => $kk->id,
+                'blok_no'         => trim(($kk->blok ? $kk->blok . ' ' : '') . ($kk->no_rumah ?? '')),
+                'kepala_keluarga' => $kk->kepala_keluarga,
+                'gang'            => optional($kk->gang)->nama_gang,
+                'gang_id'         => $kk->gang_id,
+                'tagihan_id'      => $tagihan?->id,
+                'periode_id'      => $tagihan?->periode_id,
+                'nominal'         => $tagihan ? (float) $tagihan->nominal : 0,
+                'nominal_dibayar' => $tagihan ? (float) $tagihan->nominal_dibayar : 0,
+                'sisa'            => $tagihan ? (float) $tagihan->sisa : 0,
+                'status'          => $tagihan?->status ?? 'belum',
+                'is_tunggakan'    => (bool) ($tagihan?->is_tunggakan),
+                'is_keringanan'   => (bool) ($tagihan?->is_keringanan),
+                'catatan_khusus'  => $tagihan?->catatan_khusus,
+                'is_historis'     => (bool) ($tagihan?->is_historis),
             ];
-        });
+        }));
     }
 
-    // ─── Generate tagihan untuk semua KK aktif ────────────────────────────
-    public function generateTagihan(Request $request)
+    // ─── PEMBAYARAN: simpan dengan alokasi FIFO ───────────────────────────
+    public function pembayaranSave(Request $request): JsonResponse
     {
         $request->validate([
-            'periode'       => ['required', 'date_format:Y-m'],
-            'jenis_iuran_id'=> ['required', 'exists:jenis_iuran,id'],
+            'kartu_keluarga_id' => ['required', 'exists:kartu_keluarga,id'],
+            'jenis_iuran_id'    => ['required', 'exists:jenis_iuran,id'],
+            'tanggal_bayar'     => ['required', 'date'],
+            'jumlah_total'      => ['required', 'numeric', 'min:1'],
+            'metode'            => ['nullable', 'string', 'max:50'],
+            'keterangan'        => ['nullable', 'string'],
         ]);
 
-        $jenis   = JenisIuran::findOrFail($request->jenis_iuran_id);
-        $periode = $request->periode . '-01';
-        $kkList  = KartuKeluarga::where('aktif', true)->get();
-
-        $dibuat = 0;
-        $sudahAda = 0;
-
-        foreach ($kkList as $kk) {
-            $exists = IuranTagihan::where('kartu_keluarga_id', $kk->id)
-                ->where('jenis_iuran_id', $jenis->id)
-                ->where('periode', $periode)
-                ->exists();
-
-            if ($exists) { $sudahAda++; continue; }
-
-            IuranTagihan::create([
-                'kartu_keluarga_id' => $kk->id,
-                'jenis_iuran_id'    => $jenis->id,
-                'periode'           => $periode,
-                'nominal'           => $jenis->nominal,
-                'nominal_dibayar'   => 0,
-                'status'            => 'belum',
-                'petugas_id'        => auth()->id(),
-            ]);
-            $dibuat++;
-        }
-
-        return response()->json([
-            'ok'      => true,
-            'message' => "Tagihan berhasil dibuat: {$dibuat} KK. {$sudahAda} tagihan sudah ada sebelumnya.",
-        ]);
-    }
-
-    // ─── Input pembayaran ─────────────────────────────────────────────────
-    public function bayar(Request $request)
-    {
-        $request->validate([
-            'tagihan_id'     => ['required', 'exists:iuran_tagihan,id'],
-            'nominal_bayar'  => ['required', 'numeric', 'min:1'],
-            'tanggal_bayar'  => ['required', 'date'],
-            'metode'         => ['nullable', 'string', 'max:50'],
-            'keterangan'     => ['nullable', 'string'],
-        ]);
-
-        $tagihan = IuranTagihan::findOrFail($request->tagihan_id);
-
-        // Validasi: koordinator hanya bisa bayar tagihan anggotanya
         $kkIds = $this->kkFilter();
-        if ($kkIds !== null && ! in_array($tagihan->kartu_keluarga_id, $kkIds)) {
-            return response()->json(['ok' => false, 'message' => 'Anda tidak memiliki akses ke tagihan ini.'], 403);
-        }
-        $tambah  = (float) $request->nominal_bayar;
-
-        $tagihan->nominal_dibayar = min(
-            (float) $tagihan->nominal,
-            (float) $tagihan->nominal_dibayar + $tambah
-        );
-        $tagihan->tanggal_bayar = $request->tanggal_bayar;
-        $tagihan->metode        = $request->metode;
-        $tagihan->keterangan    = $request->keterangan;
-        $tagihan->petugas_id    = auth()->id();
-
-        // Handle bukti upload
-        if ($request->hasFile('bukti_bayar')) {
-            if ($tagihan->bukti_bayar) Storage::disk('public')->delete($tagihan->bukti_bayar);
-            $tagihan->bukti_bayar = $request->file('bukti_bayar')->store('iuran/bukti', 'public');
+        if ($kkIds !== null && ! in_array($request->kartu_keluarga_id, $kkIds)) {
+            return response()->json(['ok' => false, 'message' => 'Anda tidak memiliki akses ke KK ini.'], 403);
         }
 
-        $tagihan->updateStatus();
+        $jumlah = (float) $request->jumlah_total;
 
-        // Auto-catat ke kas jika bayar (lunas atau sebagian)
-        if ($tagihan->status !== 'belum') {
+        DB::transaction(function () use ($request, $jumlah) {
+            // Simpan transaksi pembayaran
+            $pembayaran = IuranPembayaran::create([
+                'kartu_keluarga_id' => $request->kartu_keluarga_id,
+                'jenis_iuran_id'    => $request->jenis_iuran_id,
+                'tanggal_bayar'     => $request->tanggal_bayar,
+                'jumlah_total'      => $jumlah,
+                'metode'            => $request->metode,
+                'petugas_id'        => auth()->id(),
+                'keterangan'        => $request->keterangan,
+            ]);
+
+            if ($request->hasFile('bukti_bayar')) {
+                $pembayaran->bukti_bayar = $request->file('bukti_bayar')
+                    ->store('iuran/bukti', 'public');
+                $pembayaran->save();
+            }
+
+            // Alokasi FIFO ke tagihan belum/sebagian lunas (terlama dulu)
+            $tagihanList = IuranTagihan::where('kartu_keluarga_id', $request->kartu_keluarga_id)
+                ->where('jenis_iuran_id', $request->jenis_iuran_id)
+                ->whereIn('status', ['belum', 'sebagian'])
+                ->orderBy('periode')
+                ->get();
+
+            $sisa = $jumlah;
+            foreach ($tagihanList as $tagihan) {
+                if ($sisa <= 0) break;
+
+                $alokasi = min($sisa, (float) $tagihan->sisa);
+
+                IuranAlokasi::create([
+                    'pembayaran_id' => $pembayaran->id,
+                    'tagihan_id'    => $tagihan->id,
+                    'jumlah'        => $alokasi,
+                ]);
+
+                $tagihan->nominal_dibayar = (float) $tagihan->nominal_dibayar + $alokasi;
+                // Update tanggal & petugas di tagihan (info pembayaran terakhir)
+                $tagihan->tanggal_bayar = $request->tanggal_bayar;
+                $tagihan->petugas_id    = auth()->id();
+                $tagihan->updateStatus();
+
+                // Jika lunas, hapus flag tunggakan
+                if ($tagihan->status === 'lunas') {
+                    $tagihan->is_tunggakan = false;
+                    $tagihan->save();
+                }
+
+                $sisa -= $alokasi;
+            }
+
+            // Catat ke kas
             $kategori = KasKategori::where('nama', 'Iuran')->first();
+            $kk       = KartuKeluarga::find($request->kartu_keluarga_id);
+            $jenis    = JenisIuran::find($request->jenis_iuran_id);
+
             Kas::create([
-                'tanggal'    => $request->tanggal_bayar,
-                'kategori_id'=> $kategori?->id,
-                'tipe'       => 'masuk',
-                'jumlah'     => $tambah,
-                'keterangan' => 'Iuran ' . optional($tagihan->jenisIuran)->nama . ' - ' . optional($tagihan->kartuKeluarga)->kepala_keluarga,
-                'ref_tabel'  => 'iuran_tagihan',
-                'ref_id'     => $tagihan->id,
+                'tanggal'      => $request->tanggal_bayar,
+                'kategori_id'  => $kategori?->id,
+                'tipe'         => 'masuk',
+                'jumlah'       => $jumlah,
+                'keterangan'   => 'Iuran ' . optional($jenis)->nama . ' - ' . optional($kk)->kepala_keluarga,
+                'ref_tabel'    => 'iuran_pembayaran',
+                'ref_id'       => $pembayaran->id,
                 'dicatat_oleh' => auth()->id(),
             ]);
-        }
+        });
 
-        return response()->json(['ok' => true, 'message' => 'Pembayaran berhasil dicatat.']);
+        return response()->json(['ok' => true, 'message' => 'Pembayaran berhasil dicatat dan dialokasikan.']);
     }
 
-    // ─── Rekap iuran bulanan ──────────────────────────────────────────────
-    public function rekapBulanan(Request $request)
+    // ─── PEMBAYARAN: riwayat per KK ──────────────────────────────────────
+    public function pembayaranList(Request $request): JsonResponse
     {
-        $periode = $request->input('periode', now()->format('Y-m'));
-        $jenisId = $request->input('jenis_iuran_id');
-        $kkIds   = $this->kkFilter();
+        $request->validate([
+            'kartu_keluarga_id' => ['required', 'exists:kartu_keluarga,id'],
+            'jenis_iuran_id'    => ['required', 'exists:jenis_iuran,id'],
+        ]);
 
-        $tagihan = IuranTagihan::with(['kartuKeluarga.gang', 'jenisIuran'])
-            ->where('periode', $periode . '-01')
-            ->when($jenisId, fn ($q) => $q->where('jenis_iuran_id', $jenisId))
+        $kkIds = $this->kkFilter();
+        if ($kkIds !== null && ! in_array($request->kartu_keluarga_id, $kkIds)) {
+            return response()->json([], 403);
+        }
+
+        $list = IuranPembayaran::with(['alokasi.tagihan', 'petugas'])
+            ->where('kartu_keluarga_id', $request->kartu_keluarga_id)
+            ->where('jenis_iuran_id', $request->jenis_iuran_id)
+            ->orderByDesc('tanggal_bayar')
+            ->get();
+
+        return response()->json($list->map(fn ($p) => [
+            'id'           => $p->id,
+            'tanggal_bayar'=> $p->tanggal_bayar?->format('d/m/Y'),
+            'jumlah_total' => (float) $p->jumlah_total,
+            'metode'       => $p->metode,
+            'petugas'      => optional($p->petugas)->name,
+            'keterangan'   => $p->keterangan,
+            'alokasi'      => $p->alokasi->map(fn ($a) => [
+                'periode' => optional($a->tagihan?->periode)->format('m/Y'),
+                'jumlah'  => (float) $a->jumlah,
+            ]),
+        ]));
+    }
+
+    // ─── Rekap per periode ────────────────────────────────────────────────
+    public function rekapBulanan(Request $request): JsonResponse
+    {
+        $periodeId = $request->input('periode_id');
+        $kkIds     = $this->kkFilter();
+
+        if (! $periodeId) {
+            return response()->json(['total_kk' => 0, 'total_tagihan' => 0, 'total_dibayar' => 0,
+                'total_sisa' => 0, 'lunas' => 0, 'sebagian' => 0, 'belum' => 0]);
+        }
+
+        $tagihan = IuranTagihan::where('periode_id', $periodeId)
             ->when($kkIds !== null, fn ($q) => $q->whereIn('kartu_keluarga_id', $kkIds))
             ->get();
 
-        return [
-            'total_kk'       => $tagihan->count(),
-            'total_tagihan'  => $tagihan->sum('nominal'),
-            'total_dibayar'  => $tagihan->sum('nominal_dibayar'),
-            'total_sisa'     => $tagihan->sum(fn ($t) => $t->sisa),
-            'lunas'          => $tagihan->where('status', 'lunas')->count(),
-            'sebagian'       => $tagihan->where('status', 'sebagian')->count(),
-            'belum'          => $tagihan->where('status', 'belum')->count(),
-        ];
+        return response()->json([
+            'total_kk'      => $tagihan->count(),
+            'total_tagihan' => $tagihan->sum('nominal'),
+            'total_dibayar' => $tagihan->sum('nominal_dibayar'),
+            'total_sisa'    => $tagihan->sum(fn ($t) => $t->sisa),
+            'lunas'         => $tagihan->where('status', 'lunas')->count(),
+            'sebagian'      => $tagihan->where('status', 'sebagian')->count(),
+            'belum'         => $tagihan->where('status', 'belum')->count(),
+        ]);
     }
 
-    // ─── Tandai tagihan sebagai keringanan ────────────────────────────────
-    public function tandaiKeringanan(Request $request)
+    // ─── Tandai keringanan ────────────────────────────────────────────────
+    public function tandaiKeringanan(Request $request): JsonResponse
     {
         $request->validate([
             'tagihan_id'    => ['required', 'exists:iuran_tagihan,id'],
@@ -299,8 +468,39 @@ class IuranController extends Controller
         return response()->json(['ok' => true, 'message' => 'Tagihan berhasil diperbarui.']);
     }
 
-    // ─── Import tunggakan historis dari Excel ─────────────────────────────
-    public function importTunggakan(Request $request)
+    // ─── Tunggakan (lintas periode) ───────────────────────────────────────
+    public function tunggakan(Request $request): JsonResponse
+    {
+        $jenisId = $request->input('jenis_iuran_id');
+        $gangId  = $request->input('gang_id');
+        $kkIds   = $this->kkFilter();
+
+        return response()->json(
+            IuranTagihan::with(['kartuKeluarga.gang', 'jenisIuran'])
+                ->whereIn('status', ['belum', 'sebagian'])
+                ->when($jenisId, fn ($q) => $q->where('jenis_iuran_id', $jenisId))
+                ->when($kkIds !== null, fn ($q) => $q->whereIn('kartu_keluarga_id', $kkIds))
+                ->when($gangId, fn ($q) => $q->whereHas('kartuKeluarga', fn ($q2) => $q2->where('gang_id', $gangId)))
+                ->orderBy('periode')
+                ->get()
+                ->map(fn ($t) => [
+                    'id'              => $t->id,
+                    'periode'         => optional($t->periode)->format('m/Y'),
+                    'kepala_keluarga' => optional($t->kartuKeluarga)->kepala_keluarga,
+                    'blok_no'         => trim((optional($t->kartuKeluarga)->blok ?? '') . ' ' . (optional($t->kartuKeluarga)->no_rumah ?? '')),
+                    'gang'            => optional(optional($t->kartuKeluarga)->gang)->nama_gang,
+                    'jenis_iuran'     => optional($t->jenisIuran)->nama,
+                    'nominal'         => (float) $t->nominal,
+                    'nominal_dibayar' => (float) $t->nominal_dibayar,
+                    'sisa'            => (float) $t->sisa,
+                    'status'          => $t->status,
+                    'is_tunggakan'    => (bool) $t->is_tunggakan,
+                ])
+        );
+    }
+
+    // ─── Import tunggakan historis ────────────────────────────────────────
+    public function importTunggakan(Request $request): JsonResponse
     {
         $request->validate(['file' => ['required', 'file', 'mimes:xlsx', 'max:5120']]);
 
@@ -314,7 +514,7 @@ class IuranController extends Controller
             $errors  = [];
 
             foreach ($rows as $i => $row) {
-                $data = array_combine($headers, $row);
+                $data   = array_combine($headers, $row);
                 $rowNum = $i + 2;
 
                 if (blank($data['no_kk'] ?? null)) continue;
@@ -325,24 +525,19 @@ class IuranController extends Controller
                 $jenis = JenisIuran::where('nama', $data['jenis_iuran'])->first();
                 if (! $jenis) { $errors[] = "Baris {$rowNum}: Jenis iuran '{$data['jenis_iuran']}' tidak ditemukan."; continue; }
 
-                // Periode: format YYYY-MM → YYYY-MM-01
                 $periodeStr = trim($data['periode'] ?? '');
                 if (! preg_match('/^\d{4}-\d{2}$/', $periodeStr)) {
-                    $errors[] = "Baris {$rowNum}: Format periode harus YYYY-MM (contoh: 2024-01)."; continue;
+                    $errors[] = "Baris {$rowNum}: Format periode harus YYYY-MM."; continue;
                 }
-                $periode = $periodeStr . '-01';
-
+                $periode        = $periodeStr . '-01';
                 $nominalDibayar = (float) ($data['nominal_dibayar'] ?? 0);
                 $nominal        = (float) ($data['nominal'] ?? $jenis->nominal);
 
-                // Cek duplikat
                 $existing = IuranTagihan::where('kartu_keluarga_id', $kk->id)
                     ->where('jenis_iuran_id', $jenis->id)
-                    ->where('periode', $periode)
-                    ->first();
+                    ->where('periode', $periode)->first();
 
                 if ($existing) {
-                    // Update jika sudah ada
                     $existing->nominal_dibayar = min($nominal, $nominalDibayar);
                     $existing->is_historis     = true;
                     $existing->catatan_khusus  = $data['catatan'] ?? null;
@@ -368,7 +563,6 @@ class IuranController extends Controller
                     ]);
                     $tagihan->updateStatus();
                 }
-
                 $success++;
             }
 
@@ -377,37 +571,8 @@ class IuranController extends Controller
                 'message' => "{$success} data tunggakan berhasil diimport." . (count($errors) ? ' ' . count($errors) . ' baris dilewati.' : ''),
                 'errors'  => $errors,
             ]);
-
         } catch (\Throwable $e) {
             return response()->json(['ok' => false, 'message' => 'File tidak valid: ' . $e->getMessage()], 422);
         }
-    }
-
-    // ─── Laporan tunggakan ────────────────────────────────────────────────
-    public function tunggakan(Request $request)
-    {
-        $jenisId = $request->input('jenis_iuran_id');
-        $gangId  = $request->input('gang_id');
-        $kkIds   = $this->kkFilter();
-
-        return IuranTagihan::with(['kartuKeluarga.gang', 'jenisIuran'])
-            ->whereIn('status', ['belum', 'sebagian'])
-            ->when($jenisId, fn ($q) => $q->where('jenis_iuran_id', $jenisId))
-            ->when($kkIds !== null, fn ($q) => $q->whereIn('kartu_keluarga_id', $kkIds))
-            ->when($gangId, fn ($q) => $q->whereHas('kartuKeluarga', fn ($q2) => $q2->where('gang_id', $gangId)))
-            ->orderBy('periode')
-            ->get()
-            ->map(fn ($t) => [
-                'id'             => $t->id,
-                'periode'        => optional($t->periode)->format('m/Y'),
-                'kepala_keluarga'=> optional($t->kartuKeluarga)->kepala_keluarga,
-                'blok_no'        => trim((optional($t->kartuKeluarga)->blok ?? '') . ' ' . (optional($t->kartuKeluarga)->no_rumah ?? '')),
-                'gang'           => optional(optional($t->kartuKeluarga)->gang)->nama_gang,
-                'jenis_iuran'    => optional($t->jenisIuran)->nama,
-                'nominal'        => (float) $t->nominal,
-                'nominal_dibayar'=> (float) $t->nominal_dibayar,
-                'sisa'           => (float) $t->sisa,
-                'status'         => $t->status,
-            ]);
     }
 }

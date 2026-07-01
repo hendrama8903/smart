@@ -33,7 +33,7 @@
       <div class="keu-head-icon" style="background:var(--biru-soft);color:var(--biru)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
       </div>
-      <div><h3>Detail Perubahan</h3><p class="keu-sub" id="detailSub">—</p></div>
+      <h3>Detail Perubahan</h3>
     </div>
     <div style="padding:18px 20px;max-height:70vh;overflow-y:auto">
       <div class="at-detail-grid" id="detailContent"></div>
@@ -55,7 +55,7 @@
 .at-info{display:flex;align-items:center;gap:8px;padding:9px 13px;background:var(--biru-soft);border-radius:9px;font-size:12.5px;color:#1a3d52;margin-bottom:12px}
 .at-info svg{flex:0 0 14px}
 
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);overflow:auto;box-shadow:var(--shadow)}
 #gridAudit,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridAudit .dx-datagrid{border:none;color:var(--tinta)}
 #gridAudit .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -87,7 +87,6 @@
 .keu-head-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
 .keu-head-icon svg{width:17px;height:17px}
 .keu-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
-.keu-sub{font-size:12px;color:var(--redup);margin:0}
 @media(max-width:640px){
   .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
   .keu-title{font-size:18px;white-space:normal}
@@ -132,7 +131,7 @@ $(function(){
 
   grid=$("#gridAudit").dxDataGrid({
     dataSource:[],showBorders:false,showColumnLines:true,showRowLines:true,
-    rowAlternationEnabled:true,width:"100%",height:"100%",columnAutoWidth:false,
+    rowAlternationEnabled:true,width:"100%",height:"100%",columnAutoWidth:true,
     scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{visible:false},
     paging:{pageSize:50},

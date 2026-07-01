@@ -43,7 +43,7 @@ class UserController extends Controller
         $data = $request->validate([
             'name'     => ['required', 'string', 'max:100'],
             'username' => ['required', 'string', 'max:50', Rule::unique('users')->ignore($request->id)],
-            'email'    => ['required', 'email', 'max:150', Rule::unique('users')->ignore($request->id)],
+            'email'    => ['nullable', 'email', 'max:150', Rule::unique('users')->ignore($request->id)],
             'password' => [$isEdit ? 'nullable' : 'required', 'string', 'min:6', 'max:100'],
             'role_id'  => ['nullable', 'exists:roles,id'],
             'warga_id' => ['nullable', 'exists:warga,id'],

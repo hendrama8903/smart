@@ -22,16 +22,13 @@
     <h1 class="db-title">Selamat datang, {{ $user->name }}</h1>
   </div>
   @if($isPengurus)
-  <form method="GET" action="{{ route('dashboard') }}" class="db-periode-form">
+  <div class="db-periode-form">
     <label class="db-periode-label">Periode</label>
-    <select name="periode" class="db-periode-select" onchange="this.form.submit()">
-      @foreach($periodeOptions as $opt)
-        <option value="{{ $opt['value'] }}" {{ $opt['value'] === $periodeInput ? 'selected' : '' }}>
-          {{ $opt['label'] }}
-        </option>
-      @endforeach
-    </select>
-  </form>
+    <div class="db-periode-selects">
+      <div id="dashBulanSelect" style="width:130px"></div>
+      <div id="dashTahunSelect" style="width:90px"></div>
+    </div>
+  </div>
   @endif
 </div>
 
@@ -153,8 +150,8 @@
 .db-title{font-size:18px;font-weight:700;letter-spacing:-.01em;margin:0}
 .db-periode-form{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
 .db-periode-label{font-size:11px;font-weight:700;color:var(--redup);letter-spacing:.06em;text-transform:uppercase}
-.db-periode-select{padding:8px 34px 8px 14px;border:1.5px solid var(--garis-2);border-radius:10px;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--tinta);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236A7A70' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center;appearance:none;cursor:pointer;outline:none;transition:.15s}
-.db-periode-select:focus{border-color:var(--daun);box-shadow:0 0 0 3px rgba(45,106,79,.1)}
+.db-periode-selects{display:flex;gap:6px;align-items:center}
+#dashBulanSelect .dx-texteditor,#dashTahunSelect .dx-texteditor{border-radius:10px;font-size:13.5px;font-weight:600}
 
 .db-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
 .db-stats-2{grid-template-columns:repeat(3,1fr)}
@@ -241,4 +238,44 @@
 @media(max-width:1100px){.db-stats{grid-template-columns:repeat(2,1fr)}.db-grid3{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.db-stats{grid-template-columns:1fr 1fr}.db-grid3,.db-grid2{grid-template-columns:1fr}}
 </style>
+@endpush
+
+@push('scripts')
+<script>
+$(function(){
+  @if($isPengurus)
+  var bulanData = @json($bulanOptions);
+  var tahunData = @json($tahunOptions);
+  var curBulan  = {{ $bulanInput }};
+  var curTahun  = {{ $tahunInput }};
+  var baseUrl   = "{{ route('dashboard') }}";
+
+  function goDashboard(tahun, bulan){
+    window.location.href = baseUrl + "?tahun=" + tahun + "&bulan=" + bulan;
+  }
+
+  $("#dashBulanSelect").dxSelectBox({
+    dataSource  : bulanData,
+    valueExpr   : "value",
+    displayExpr : "label",
+    value       : curBulan,
+    onValueChanged: function(e){
+      var tahun = $("#dashTahunSelect").dxSelectBox("instance").option("value");
+      goDashboard(tahun, e.value);
+    }
+  });
+
+  $("#dashTahunSelect").dxSelectBox({
+    dataSource  : tahunData,
+    valueExpr   : "value",
+    displayExpr : "label",
+    value       : curTahun,
+    onValueChanged: function(e){
+      var bulan = $("#dashBulanSelect").dxSelectBox("instance").option("value");
+      goDashboard(e.value, bulan);
+    }
+  });
+  @endif
+});
+</script>
 @endpush

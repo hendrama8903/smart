@@ -26,7 +26,7 @@
       <div class="keu-head-icon" style="background:var(--biru-soft);color:var(--biru)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/></svg>
       </div>
-      <div><h3 id="fasilitasModalTitle">Tambah Fasilitas</h3><p class="keu-sub">Data fasilitas RT yang disewakan</p></div>
+      <h3 id="fasilitasModalTitle">Tambah Fasilitas</h3>
     </div>
     <form onsubmit="return false" class="keu-body">
       <input type="hidden" id="f_id">
@@ -37,7 +37,7 @@
           <label>&nbsp;</label>
           <div class="mf-switch" style="margin-top:0">
             <div id="f_aktif"></div>
-            <div><strong style="font-size:12.5px">Aktif</strong></div>
+            <label class="mf-switch-lbl">Aktif</label>
           </div>
         </div>
       </div>
@@ -46,7 +46,7 @@
     <div class="keu-foot">
       <button class="mbtn ghost" onclick="fasilitasClose()">Batal</button>
       <button class="mbtn mbtn-save" onclick="fasilitasSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Simpan
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan
       </button>
     </div>
   </div>
@@ -59,7 +59,7 @@
       <div class="keu-head-icon" style="background:var(--emas-soft);color:#7a5c00">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       </div>
-      <div><h3 id="tarifModalTitle">Tambah Tarif</h3><p class="keu-sub" id="tarifModalSub">—</p></div>
+      <h3 id="tarifModalTitle">Tambah Tarif</h3>
     </div>
     <form onsubmit="return false" class="keu-body">
       <input type="hidden" id="t_id">
@@ -82,7 +82,7 @@
     <div class="keu-foot">
       <button class="mbtn ghost" onclick="tarifClose()">Batal</button>
       <button class="mbtn mbtn-save" onclick="tarifSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Simpan Tarif
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan Tarif
       </button>
     </div>
   </div>
@@ -118,7 +118,7 @@
 /* ── Grid wrap ── */
 .grid-wrap{
   background:var(--surface);border:1px solid var(--garis);
-  border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow);
+  overflow:auto;box-shadow:var(--shadow);
   height:calc(100vh - 140px);
 }
 
@@ -146,7 +146,7 @@
 .tarif-panel-head h4{font-size:13px;font-weight:700;color:var(--tinta)}
 .tarif-grid .dx-datagrid-headers .dx-header-row>td{font-size:10px;padding:8px 12px}
 .tarif-grid .dx-data-row>td{padding:7px 12px;font-size:12.5px;border-bottom:1px solid var(--garis);border-right:1px solid var(--garis)}
-.tarif-grid .dx-datagrid{border:1px solid var(--garis);border-radius:10px}
+.tarif-grid .dx-datagrid{border:1px solid var(--garis)}
 
 .cat-warga{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--daun-pucat);color:#14532D}
 .cat-luar{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--stempel-soft);color:#9A3422}
@@ -165,19 +165,21 @@
 .keu-head-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
 .keu-head-icon svg{width:17px;height:17px}
 .keu-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
-.keu-sub{font-size:12px;color:var(--redup);margin:0}
 .keu-body{padding:16px 20px;display:flex;flex-direction:column;gap:0}
 .ff{margin-bottom:10px;display:flex;flex-direction:column}
 .ff>label{font-size:12px;font-weight:700;margin-bottom:4px;color:var(--redup)}
 .ff2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .hint{font-size:11px;color:#9aa89f;font-weight:500}.req{color:var(--stempel)}
-.mf-switch{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--kertas);border:1px solid var(--garis);border-radius:9px}
+.mf-switch{display:flex;align-items:center;gap:8px;margin-top:4px}
 .tarif-check{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--redup);padding:8px 0}
 .tarif-check svg{flex:0 0 14px}
 .keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
-.keu-foot .mbtn{flex:0 0 auto}
-.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
-.mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
+.keu-foot .mbtn{flex:0 0 auto;min-width:90px}
+.keu-foot .mbtn.ghost{background:var(--stempel-soft);color:var(--stempel);border:1.5px solid #f5c6bb}
+.keu-foot .mbtn.ghost:hover{background:#fde5e0}
+.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:13px;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
+.mbtn-save:hover{background:var(--hutan-2)}
+.mbtn-save svg{width:13px;height:13px}
 </style>
 @endpush
 

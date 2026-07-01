@@ -50,6 +50,7 @@ class IuranSayaController extends Controller
                 'status'           => $t->status,
                 'tanggal_bayar'    => $t->tanggal_bayar?->format('d/m/Y'),
                 'is_keringanan'    => (bool) $t->is_keringanan,
+                'is_tunggakan'     => (bool) $t->is_tunggakan,
                 'catatan_khusus'   => $t->catatan_khusus,
             ]);
     }

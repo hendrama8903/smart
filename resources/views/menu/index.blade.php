@@ -44,10 +44,7 @@
           <path d="M17 14v6M14 17h6"/>
         </svg>
       </div>
-      <div>
-        <h3 id="menuModalTitle">Tambah Menu</h3>
-        <p id="menuModalSub" class="mf-sub">Lengkapi informasi menu baru</p>
-      </div>
+      <h3 id="menuModalTitle">Tambah Menu</h3>
     </div>
 
     <form id="formMenu" onsubmit="return false" class="mf-body">
@@ -78,10 +75,7 @@
 
       <div class="mf-switch">
         <div id="m_aktif"></div>
-        <div>
-          <strong>Menu Aktif</strong>
-          <span>Tampilkan di sidebar navigasi</span>
-        </div>
+        <label class="mf-switch-lbl">Menu Aktif</label>
       </div>
 
     </form>
@@ -89,7 +83,7 @@
     <div class="mf-foot">
       <button class="mbtn ghost" type="button" onclick="menuClose()">Batal</button>
       <button class="mbtn mbtn-save" type="button" onclick="menuSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
           <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
         </svg>
@@ -147,7 +141,6 @@
 .grid-wrap {
   background: var(--surface);
   border: 1px solid var(--garis);
-  border-radius: var(--radius);
   overflow: auto;
   box-shadow: var(--shadow);
   height: calc(100vh - 150px);
@@ -284,13 +277,7 @@
 }
 .mf-divider::before, .mf-divider::after { content: ""; flex: 1; height: 1px; background: var(--garis) }
 
-.mf-switch {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 10px; background: var(--kertas);
-  border: 1px solid var(--garis); border-radius: 9px; margin-top: 2px;
-}
-.mf-switch strong { display: block; font-size: 12.5px; font-weight: 700; color: var(--tinta) }
-.mf-switch span { font-size: 11.5px; color: var(--redup) }
+.mf-switch { display: flex; align-items: center; gap: 8px; margin-top: 4px }
 
 
 .mf-foot {
@@ -298,15 +285,17 @@
   padding: 12px 20px; border-top: 1px solid var(--garis);
   background: var(--kertas); border-radius: 0 0 14px 14px;
 }
-.mf-foot .mbtn { flex: 0 0 auto }
+.mf-foot .mbtn { flex: 0 0 auto; min-width: 90px }
+.mf-foot .mbtn.ghost { background: var(--stempel-soft); color: var(--stempel); border: 1.5px solid #f5c6bb }
+.mf-foot .mbtn.ghost:hover { background: #fde5e0 }
 .mbtn-save {
-  display: inline-flex; align-items: center; gap: 7px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   background: var(--hutan); color: #fff; font-weight: 700;
-  font-size: 14px; padding: 11px 22px; border-radius: 10px;
+  font-size: 13px; padding: 8px 18px; border-radius: 10px;
   border: none; cursor: pointer; transition: .14s;
 }
 .mbtn-save:hover { background: var(--hutan-2) }
-.mbtn-save svg { width: 14px; height: 14px }
+.mbtn-save svg { width: 13px; height: 13px }
 
 @media (max-width: 600px) {
   .mf-card { margin: 12px }
@@ -364,7 +353,7 @@ $(function () {
     scrolling: { useNative: true, showScrollbar: 'onHover', mode: 'standard' },
     width: "100%",
     height: "100%",
-    columnAutoWidth: false,
+    columnAutoWidth: true,
     wordWrapEnabled: false,
     headerFilter: { visible: true },
     paging: { pageSize: 50 },
@@ -472,7 +461,6 @@ $(function () {
 function menuAdd() {
   $("#m_id").val('');
   $("#menuModalTitle").text('Tambah Menu');
-  $("#menuModalSub").text('Lengkapi informasi menu baru');
   $("#m_nama").dxTextBox("instance").option("value","");
   $("#m_controller").dxTextBox("instance").option("value","");
   $("#m_fungsi").dxTextBox("instance").option("value","index");
@@ -491,8 +479,7 @@ function menuEdit() {
   if (!focusedRow) { DevExpress.ui.notify("Pilih baris menu terlebih dahulu","warning",2500); return; }
   var d = focusedRow;
   $("#m_id").val(d.id);
-  $("#menuModalTitle").text('Ubah Menu');
-  $("#menuModalSub").text('Mengubah: ' + d.nama);
+  $("#menuModalTitle").text('Ubah Menu: ' + d.nama);
   $("#m_nama").dxTextBox("instance").option("value", d.nama || "");
   $("#m_type").dxSelectBox("instance").option("value", d.type || "screen");
   $("#m_controller").dxTextBox("instance").option("value", d.controller || "");

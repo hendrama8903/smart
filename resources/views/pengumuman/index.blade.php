@@ -28,7 +28,7 @@
       <div class="pg-head-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </div>
-      <div><h3 id="pgModalTitle">Buat Pengumuman</h3><p class="pg-sub">Pengumuman akan tampil untuk semua warga</p></div>
+      <h3 id="pgModalTitle">Buat Pengumuman</h3>
     </div>
     <form id="formPg" onsubmit="return false" class="pg-body">
       <input type="hidden" id="pg_id">
@@ -71,7 +71,7 @@
     <div class="pg-foot">
       <button class="mbtn ghost" onclick="pgClose()">Batal</button>
       <button class="mbtn mbtn-save" onclick="pgSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Terbitkan
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Terbitkan
       </button>
     </div>
   </div>
@@ -99,7 +99,7 @@
 .pg-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .btn-hapus{background:var(--stempel)!important;color:#fff!important}.btn-hapus:hover{filter:brightness(1.08)}
 .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none}
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);overflow:auto;box-shadow:var(--shadow)}
 #gridPengumuman,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridPengumuman .dx-datagrid{border:none;color:var(--tinta)}
 #gridPengumuman .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -132,7 +132,6 @@
 .pg-head-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;background:var(--daun-pucat);color:var(--daun);display:flex;align-items:center;justify-content:center}
 .pg-head-icon svg{width:17px;height:17px}
 .pg-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
-.pg-sub{font-size:12px;color:var(--redup);margin:0}
 .pg-body{padding:18px 20px;display:flex;flex-direction:column;gap:0;max-height:65vh;overflow-y:auto}
 .ff{margin-bottom:13px;display:flex;flex-direction:column}
 .ff>label{font-size:12px;font-weight:700;margin-bottom:5px;color:var(--redup)}
@@ -144,9 +143,12 @@
 .pg-file-current{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--biru-soft);border:1px solid #90CAF9;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--biru)}
 .pg-file-del{background:none;border:none;color:var(--stempel);font-size:18px;cursor:pointer;font-weight:700;line-height:1;padding:0 4px}
 .pg-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
-.pg-foot .mbtn{flex:0 0 auto}
-.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
-.mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
+.pg-foot .mbtn{flex:0 0 auto;min-width:90px}
+.pg-foot .mbtn.ghost{background:var(--stempel-soft);color:var(--stempel);border:1.5px solid #f5c6bb}
+.pg-foot .mbtn.ghost:hover{background:#fde5e0}
+.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:13px;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
+.mbtn-save:hover{background:var(--hutan-2)}
+.mbtn-save svg{width:13px;height:13px}
 @media(max-width:640px){
   .pg-toolbar{flex-direction:column;align-items:stretch;gap:10px}
   .pg-title{font-size:18px;white-space:normal}
@@ -191,7 +193,7 @@ $(function(){
     }}),
     showBorders:false,showColumnLines:true,showRowLines:true,
     rowAlternationEnabled:true,width:"100%",height:"100%",
-    columnAutoWidth:false,
+    columnAutoWidth:true,
     scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     focusedRowEnabled:true,
     onFocusedRowChanged:e=>{focusedRow=e.row?e.row.data:null;},

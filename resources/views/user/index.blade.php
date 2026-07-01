@@ -51,10 +51,7 @@
           <circle cx="12" cy="7" r="4"/>
         </svg>
       </div>
-      <div>
-        <h3 id="userModalTitle">Tambah User</h3>
-        <p id="userModalSub" class="uf-sub">Lengkapi informasi pengguna baru</p>
-      </div>
+      <h3 id="userModalTitle">Tambah User</h3>
     </div>
 
     <form id="formUser" onsubmit="return false" class="uf-body">
@@ -64,7 +61,7 @@
 
       <div class="ff2">
         <div class="ff"><label>Username <span class="req">*</span></label><div id="u_username"></div></div>
-        <div class="ff"><label>Email <span class="req">*</span></label><div id="u_email"></div></div>
+        <div class="ff"><label>Email</label><div id="u_email"></div></div>
       </div>
 
       <div class="ff2">
@@ -82,17 +79,14 @@
 
       <div class="uf-switch">
         <div id="u_status_switch"></div>
-        <div>
-          <strong>Akun Aktif</strong>
-          <span>User bisa login ke sistem</span>
-        </div>
+        <label class="uf-switch-lbl">Akun Aktif</label>
       </div>
     </form>
 
     <div class="uf-foot">
       <button class="mbtn ghost" type="button" onclick="userClose()">Batal</button>
       <button class="mbtn mbtn-save" type="button" onclick="userSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
           <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
         </svg>
@@ -139,7 +133,7 @@
 /* ── Grid container ───────────────────────── */
 .grid-wrap {
   background: var(--surface); border: 1px solid var(--garis);
-  border-radius: var(--radius); overflow: auto; box-shadow: var(--shadow);
+  overflow: auto; box-shadow: var(--shadow);
   height: calc(100vh - 162px);
 }
 
@@ -217,17 +211,16 @@
 .uf-card { max-width: 580px; width: 100%; padding: 0; text-align: left }
 
 .uf-head {
-  display: flex; align-items: center; gap: 12px;
-  padding: 14px 20px; border-bottom: 1px solid var(--garis);
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 20px; border-bottom: 1px solid var(--garis);
 }
 .uf-head-icon {
-  flex: 0 0 34px; width: 34px; height: 34px; border-radius: 9px;
+  flex: 0 0 30px; width: 30px; height: 30px; border-radius: 8px;
   background: var(--daun-pucat); color: var(--daun);
   display: flex; align-items: center; justify-content: center;
 }
-.uf-head-icon svg { width: 17px; height: 17px }
-.uf-head h3 { font-size: 15px; font-weight: 800; margin: 0 0 1px }
-.uf-sub { font-size: 12px; color: var(--redup); margin: 0 }
+.uf-head-icon svg { width: 15px; height: 15px }
+.uf-head h3 { font-size: 14px; font-weight: 800; margin: 0 }
 
 .uf-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 0 }
 
@@ -237,29 +230,26 @@
 .req { color: var(--stempel) }
 .hint { font-size: 11px; color: #9aa89f; font-weight: 500 }
 
-.uf-switch {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 10px; background: var(--kertas);
-  border: 1px solid var(--garis); border-radius: 9px; margin-top: 2px;
-}
-.uf-switch strong { display: block; font-size: 12.5px; font-weight: 700; color: var(--tinta) }
-.uf-switch span { font-size: 11.5px; color: var(--redup) }
+.uf-switch { display: flex; align-items: center; gap: 8px; margin-top: 4px }
+.uf-switch-lbl { font-size: 12.5px; font-weight: 600; color: var(--tinta); cursor: pointer }
 
 .uf-foot {
   display: flex; gap: 10px; justify-content: flex-end;
   padding: 12px 20px; border-top: 1px solid var(--garis);
   background: var(--kertas); border-radius: 0 0 14px 14px;
 }
-.uf-foot .mbtn { flex: 0 0 auto }
+.uf-foot .mbtn { flex: 0 0 auto; min-width: 90px }
+.uf-foot .mbtn.ghost { background: var(--stempel-soft); color: var(--stempel); border: 1.5px solid #f5c6bb }
+.uf-foot .mbtn.ghost:hover { background: #fde5e0 }
 
 .mbtn-save {
-  display: inline-flex; align-items: center; gap: 7px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   background: var(--hutan); color: #fff; font-weight: 700;
-  font-size: 14px; padding: 11px 22px; border-radius: 10px;
+  font-size: 13px; padding: 8px 18px; border-radius: 10px;
   border: none; cursor: pointer; transition: .14s;
 }
 .mbtn-save:hover { background: var(--hutan-2) }
-.mbtn-save svg { width: 14px; height: 14px }
+.mbtn-save svg { width:  13px; height:  13px }
 
 @media (max-width: 600px) {
   .ff2 { grid-template-columns: 1fr }
@@ -314,7 +304,7 @@ $(function () {
     rowAlternationEnabled: false,
     width: "100%",
     height: "100%",
-    columnAutoWidth: false,
+    columnAutoWidth: true,
     scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     wordWrapEnabled: false,
     headerFilter: { visible: true },
@@ -393,18 +383,25 @@ $(function () {
     showClearButton: true, placeholder: "— Pilih role —"
   });
 
-  $("#u_warga").dxSelectBox({
+  $("#u_warga").dxLookup({
     dataSource: new DevExpress.data.CustomStore({
       key: "id",
       load: (opts) => $.getJSON(urlWargaLookup, {
         q: opts.searchValue || '',
         current: $("#u_id").data('warga') || ''
-      })
+      }),
+      byKey: (key) => $.getJSON(urlWargaLookup, { current: key }).then(function(r){ return r[0] || null; })
     }),
     valueExpr: "id",
     displayExpr: function(item) { return item ? item.nama + (item.nik ? ' — ' + item.nik : '') : ''; },
     searchEnabled: true, minSearchLength: 0,
-    showClearButton: true, placeholder: "— Tidak dihubungkan —"
+    placeholder: "— Tidak dihubungkan —",
+    clearButtonText: "Hapus",
+    cancelButtonText: "Batal",
+    searchPlaceholder: "Cari nama warga...",
+    title: "Pilih Warga",
+    showClearButton: true,
+    dropDownOptions: { showTitle: true }
   });
 });
 
@@ -440,7 +437,6 @@ function exportUser() {
 function userAdd() {
   $("#u_id").val('').data('warga', '');
   $("#userModalTitle").text('Tambah User');
-  $("#userModalSub").text('Lengkapi informasi pengguna baru');
   $("#u_pass_hint").text('(wajib diisi)').css('color', 'var(--stempel)');
 
   $("#u_name").dxTextBox("instance").option("value", "");
@@ -457,8 +453,7 @@ function userEdit() {
   if (!focusedRow) { DevExpress.ui.notify("Pilih baris user terlebih dahulu", "warning", 2500); return; }
   var d = focusedRow;
   $("#u_id").val(d.id).data('warga', d.warga_id || '');
-  $("#userModalTitle").text('Ubah User');
-  $("#userModalSub").text('Mengubah: ' + d.name);
+  $("#userModalTitle").text('Ubah User: ' + d.name);
   $("#u_pass_hint").text('(kosongkan jika tidak diubah)').css('color', '#9aa89f');
 
   $("#u_name").dxTextBox("instance").option("value", d.name || "");
@@ -486,8 +481,11 @@ function reloadRoleLookup(roleId) {
 }
 
 function reloadWargaLookup(currentId) {
-  var wb = $("#u_warga").dxSelectBox("instance");
-  wb.getDataSource().reload().done(function() { wb.option("value", currentId); });
+  var wb = $("#u_warga").dxLookup("instance");
+  if (!currentId) { wb.option("value", null); return; }
+  wb.getDataSource().reload().done(function() {
+    wb.option("value", currentId);
+  });
 }
 
 function userSave() {
@@ -498,13 +496,12 @@ function userSave() {
     email:    $("#u_email").dxTextBox("instance").option("value"),
     password: $("#u_password").dxTextBox("instance").option("value"),
     role_id:  $("#u_role").dxSelectBox("instance").option("value"),
-    warga_id: $("#u_warga").dxSelectBox("instance").option("value"),
+    warga_id: $("#u_warga").dxLookup("instance").option("value"),
     status:   $("#u_status_switch").dxSwitch("instance").option("value") ? 'aktif' : 'nonaktif',
   };
 
   if (!data.name)     { DevExpress.ui.notify("Nama lengkap wajib diisi", "error", 2500); return; }
   if (!data.username) { DevExpress.ui.notify("Username wajib diisi", "error", 2500); return; }
-  if (!data.email)    { DevExpress.ui.notify("Email wajib diisi", "error", 2500); return; }
   if (!data.id && !data.password) { DevExpress.ui.notify("Password wajib diisi untuk user baru", "error", 2500); return; }
 
   $.ajax({ url: urlSave, type: "POST", data: data })

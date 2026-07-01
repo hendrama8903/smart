@@ -19,24 +19,22 @@ class DashboardController extends Controller
         $user       = Auth::user();
         $isPengurus = $user->hasRole('admin', 'ketua', 'sekretaris', 'bendahara');
 
-        // Periode yang dipilih (default: bulan ini)
-        $periodeInput = $request->input('periode', now()->format('Y-m'));
-        // Validasi format
-        if (! preg_match('/^\d{4}-\d{2}$/', $periodeInput)) {
-            $periodeInput = now()->format('Y-m');
-        }
-        $periode    = $periodeInput . '-01';
-        $bulan      = \Carbon\Carbon::parse($periode)->locale('id')->isoFormat('MMMM YYYY');
+        $namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni',
+                      'Juli','Agustus','September','Oktober','November','Desember'];
 
-        // Opsi periode: 12 bulan ke belakang + ke depan 3 bulan
-        $periodeOptions = [];
-        for ($i = 11; $i >= -3; $i--) {
-            $p = now()->subMonths($i);
-            $periodeOptions[] = [
-                'value' => $p->format('Y-m'),
-                'label' => $p->locale('id')->isoFormat('MMMM YYYY'),
-            ];
-        }
+        $tahunInput = (int) $request->input('tahun', now()->year);
+        $bulanInput = (int) $request->input('bulan', now()->month);
+        if ($tahunInput < 2000 || $tahunInput > 2100) $tahunInput = now()->year;
+        if ($bulanInput < 1   || $bulanInput > 12)   $bulanInput = now()->month;
+
+        $periodeInput = sprintf('%04d-%02d', $tahunInput, $bulanInput);
+        $periode      = $periodeInput . '-01';
+        $bulan        = ($namaBulan[$bulanInput] ?? '') . ' ' . $tahunInput;
+
+        $tahunOptions = array_map(fn ($y) => ['value' => $y, 'label' => (string)$y],
+                            range(now()->year - 3, now()->year + 1));
+        $bulanOptions = array_map(fn ($b) => ['value' => $b, 'label' => $namaBulan[$b]],
+                            range(1, 12));
 
         $saldoKas    = (float) Kas::where('tipe','masuk')->sum('jumlah')
                      - (float) Kas::where('tipe','keluar')->sum('jumlah');
@@ -96,7 +94,8 @@ class DashboardController extends Controller
             ->groupBy('status')->get()->keyBy('status');
 
         return view('dashboard', compact(
-            'isPengurus','user','bulan','periodeInput','periodeOptions',
+            'isPengurus','user','bulan','periodeInput',
+            'tahunInput','bulanInput','tahunOptions','bulanOptions',
             'pengumumanTerbaru',
             'saldoKas','kasmasukBulan','kaskeluarBulan',
             'jumlahWarga','jumlahKK',

@@ -334,6 +334,13 @@ tbody tr:hover{background:#FBFAF5}
   /* sidebar foot lebih lega di drawer */
   .topbtn{width:40px;height:40px}
 }
+@media(max-width:768px){
+  /* ── Tablet: DataGrid sedikit lebih kompak ── */
+  .dx-datagrid-headers .dx-header-row>td{padding:8px 10px !important;font-size:10px !important}
+  .dx-data-row>td{padding:8px 10px !important;font-size:12px !important}
+  .dx-pager{padding:6px 10px !important}
+}
+
 @media(max-width:600px){
   .stats{grid-template-columns:1fr}
   .hide-sm{display:none}
@@ -375,16 +382,16 @@ tbody tr:hover{background:#FBFAF5}
 
   /* ── Mobile: search topbar ── */
   .search{display:none}
+
+  /* ── Mobile: DevExtreme DataGrid kompak ── */
+  .dx-datagrid-headers .dx-header-row>td{padding:6px 9px !important;font-size:9.5px !important}
+  .dx-data-row>td{padding:7px 9px !important;font-size:11.5px !important}
+  .dx-pager{padding:5px 9px !important;font-size:11.5px !important}
+  .dx-pager .dx-page-size,.dx-pager .dx-pages{font-size:11.5px !important}
+  .dx-datagrid-search-panel .dx-texteditor-input{font-size:12px !important}
 }
 
 /* blok user di bawah panel */
-.panel-user{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px 10px 4px;border-top:1px solid var(--garis)}
-.pu-av{width:36px;height:36px;flex:0 0 36px;border-radius:10px;background:var(--daun-pucat);color:var(--hutan);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
-.pu-info{min-width:0;flex:1}
-.pu-info b{display:block;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pu-info span{font-size:11px;color:var(--redup)}
-.pu-out{width:34px;height:34px;border-radius:9px;border:1px solid var(--garis);color:var(--stempel);display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;transition:.15s}
-.pu-out:hover{background:var(--stempel-soft)}
 .panel{padding-bottom:14px}
 
 /* ===== modal konfirmasi modern ===== */
@@ -400,6 +407,7 @@ tbody tr:hover{background:#FBFAF5}
 .modal-card h3{font-size:19px;font-weight:800;letter-spacing:-.01em;margin-bottom:8px}
 .modal-card p{font-size:13.5px;color:var(--redup);line-height:1.55;margin-bottom:22px}
 .modal-actions{display:flex;gap:10px}
+.mf-switch-lbl{font-size:12.5px;font-weight:600;color:var(--tinta);cursor:pointer}
 .mbtn{flex:1;padding:12px;border-radius:11px;font-weight:700;font-size:14px;cursor:pointer;transition:.15s;border:none}
 .mbtn.ghost{background:var(--kertas2);color:var(--tinta);border:1px solid var(--garis)}
 .mbtn.ghost:hover{background:var(--garis)}
@@ -534,16 +542,6 @@ tbody tr:hover{background:#FBFAF5}
   @endforeach
 </nav>
 
-      <div class="panel-user">
-        <div class="pu-av">{{ $inisial }}</div>
-        <div class="pu-info"><b>{{ $u->name }}</b><span>{{ $roleLabel }}</span></div>
-        <form id="logoutForm" method="POST" action="{{ route('logout') }}">
-          @csrf
-          <button class="pu-out" type="button" onclick="openLogout()" title="Keluar">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          </button>
-        </form>
-      </div>
     </div>
   </aside>
 
@@ -669,6 +667,7 @@ $(function(){
 });
 </script>
 @stack('scripts')
+<form id="logoutForm" method="POST" action="{{ route('logout') }}" style="display:none">@csrf</form>
 <!-- modal konfirmasi keluar -->
 <div class="modal-overlay" id="logoutModal" onclick="if(event.target===this)closeLogout()">
   <div class="modal-card">
