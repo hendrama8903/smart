@@ -5,8 +5,6 @@
 <div class="keu-toolbar">
   <h2 class="keu-title">Kas RT</h2>
   <div class="keu-actions">
-    <div id="filterBulan"></div>
-    <div id="filterTipe"></div>
     <button class="btn" id="btnMasuk" type="button" onclick="kasAdd('masuk')">
       <svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Kas Masuk
     </button>
@@ -16,6 +14,10 @@
     <button class="btn btn-unduh" id="btnUnduh" type="button" onclick="exportKas()">
       <svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Unduh
     </button>
+  </div>
+  <div class="keu-filters">
+    <div id="filterBulan"></div>
+    <div id="filterTipe"></div>
   </div>
 </div>
 
@@ -97,9 +99,10 @@
 @push('styles')
 <style>
 .content{max-width:none;padding-bottom:0}
-.keu-toolbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:16px;flex-wrap:wrap}
+.keu-toolbar{display:flex;flex-direction:column;align-items:stretch;margin-bottom:14px;gap:10px}
 .keu-title{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--tinta);margin:0}
 .keu-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.keu-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .btn-hapus{background:var(--stempel)!important;color:#fff!important}.btn-hapus:hover{filter:brightness(1.08)}
 .btn-unduh{background:var(--biru)!important;color:#fff!important}.btn-unduh:hover{filter:brightness(1.08)}
 .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none}
@@ -157,9 +160,7 @@
 .bukti-preview img{width:100%;height:100%;object-fit:cover}
 @media(max-width:900px){.kas-summary{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:640px){
-  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
   .keu-title{font-size:18px;white-space:normal}
-  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
   .grid-wrap{height:calc(100vh - 210px)}
 }
 </style>
