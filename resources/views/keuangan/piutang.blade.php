@@ -28,7 +28,7 @@
       <div class="keu-head-icon" style="background:var(--stempel-soft);color:var(--stempel)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       </div>
-      <div><h3 id="piutangModalTitle">Tambah Piutang</h3><p class="keu-sub" id="piutangModalSub">Catat uang yang dipinjam warga</p></div>
+      <h3 id="piutangModalTitle">Tambah Piutang</h3>
     </div>
     <form id="formPiutang" onsubmit="return false" class="keu-body">
       <input type="hidden" id="p_id">
@@ -44,7 +44,7 @@
     <div class="keu-foot">
       <button class="mbtn ghost" onclick="piutangClose()">Batal</button>
       <button class="mbtn mbtn-save" onclick="piutangSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Simpan
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan
       </button>
     </div>
   </div>
@@ -57,7 +57,7 @@
       <div class="keu-head-icon" style="background:var(--daun-pucat);color:var(--daun)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
       </div>
-      <div><h3>Catat Pengembalian</h3><p class="keu-sub" id="cicilanSub">—</p></div>
+      <h3>Catat Pengembalian</h3>
     </div>
     <div class="keu-body">
       <input type="hidden" id="c_piutang_id">
@@ -76,7 +76,7 @@
     <div class="keu-foot">
       <button class="mbtn ghost" onclick="cicilanClose()">Tutup</button>
       <button class="mbtn mbtn-save" onclick="cicilanSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Catat
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Catat
       </button>
     </div>
   </div>
@@ -110,7 +110,7 @@
 .sum-lbl{font-size:11.5px;color:var(--redup);font-weight:600;margin-bottom:6px}
 .sum-val{font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--tinta)}
 .sum-sub{font-size:11px;color:var(--redup);margin-top:3px}
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);overflow:auto;box-shadow:var(--shadow)}
 #gridPiutang,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridPiutang .dx-datagrid{border:none;color:var(--tinta)}
 #gridPiutang .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -133,19 +133,27 @@
 .keu-head-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
 .keu-head-icon svg{width:17px;height:17px}
 .keu-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
-.keu-sub{font-size:12px;color:var(--redup);margin:0}
 .keu-body{padding:18px 20px;display:flex;flex-direction:column;gap:0;max-height:70vh;overflow-y:auto}
 .ff{margin-bottom:13px;display:flex;flex-direction:column}
 .ff>label{font-size:12px;font-weight:700;margin-bottom:5px;color:var(--redup)}
 .ff2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .hint{font-size:11px;color:#9aa89f;font-weight:500}.req{color:var(--stempel)}
 .bayar-info{padding:10px 13px;background:var(--kertas);border:1px solid var(--garis);border-radius:9px;margin-bottom:14px;font-size:13px}
-.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 20px 20px}
-.keu-foot .mbtn{flex:0 0 auto}
-.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
-.mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
+.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
+.keu-foot .mbtn{flex:0 0 auto;min-width:90px}
+.keu-foot .mbtn.ghost{background:var(--stempel-soft);color:var(--stempel);border:1.5px solid #f5c6bb}
+.keu-foot .mbtn.ghost:hover{background:#fde5e0}
+.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:13px;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
+.mbtn-save:hover{background:var(--hutan-2)}
+.mbtn-save svg{width:13px;height:13px}
 .riwayat-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--garis)}
 .riwayat-item:last-child{border-bottom:none}
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -175,6 +183,7 @@ $(function(){
     showBorders:false,showColumnLines:true,showRowLines:true,
     rowAlternationEnabled:true,width:"100%",height:"100%",
     columnAutoWidth:true,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},
     columns:[

@@ -105,20 +105,22 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .form-head h2{font-size:26px;font-weight:800;letter-spacing:-.02em}
 .form-head p{color:var(--redup);font-size:13.5px;margin-top:6px}
 
-/* App badge di form */
-.app-badge{
-  display:flex;align-items:center;gap:10px;margin-bottom:24px;
-  padding:10px 13px;background:var(--kertas);border:1px solid var(--garis);
-  border-radius:11px;
+/* Mobile header — logo + nama app */
+.mobile-header{ display:none }
+.mh-logo{
+  width:60px;height:60px;border-radius:50%;overflow:hidden;flex:0 0 60px;
+  border:2.5px solid rgba(45,106,79,.25);background:var(--surface);
+  box-shadow:0 2px 10px rgba(16,40,28,.1);
 }
-.app-badge img.badge-logo{width:32px;height:32px;border-radius:50%;object-fit:cover}
-.app-badge-fallback{
-  width:32px;height:32px;border-radius:50%;background:var(--daun);
-  display:flex;align-items:center;justify-content:center;flex:0 0 32px;
+.mh-logo img{width:100%;height:100%;object-fit:contain}
+.mh-logo-fallback{
+  width:60px;height:60px;border-radius:50%;background:var(--daun);
+  display:none;align-items:center;justify-content:center;flex:0 0 60px;
 }
-.app-badge-fallback svg{width:17px;height:17px;color:#fff}
-.app-badge-info b{display:block;font-size:13px;font-weight:800;color:var(--hutan)}
-.app-badge-info span{display:block;font-size:11px;color:var(--redup)}
+.mh-logo-fallback span{font-size:15px;font-weight:800;color:#F6EFD9;font-family:'IBM Plex Mono',monospace}
+.mh-info b{display:block;font-size:20px;font-weight:800;color:var(--hutan);letter-spacing:-.01em;line-height:1.1}
+.mh-info .mh-lokasi{display:block;font-size:11px;color:var(--redup);margin-top:4px;font-weight:500}
+.mh-tagline{display:none}
 
 .field{margin-bottom:16px}
 .field label{display:block;font-size:12.5px;font-weight:700;color:var(--tinta);margin-bottom:7px}
@@ -159,9 +161,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .help a{color:var(--daun);font-weight:700}
 .formfoot{margin-top:24px;text-align:center;font-size:11px;color:#A7B3AA}
 
-/* Logo SMART di form — default hidden, tampil di mobile */
-.mobile-logo { display:none }
-.mobile-logo img { height:48px;width:auto }
+/* (mobile-logo digantikan .mobile-header) */
 .alert-err{background:#FBEAE6;border:1px solid #E9C3BA;color:#9A3422;font-size:13px;font-weight:600;padding:11px 14px;border-radius:11px;margin-bottom:18px;display:flex;align-items:flex-start;gap:9px}
 .alert-err svg{flex:0 0 16px;margin-top:1px}
 
@@ -172,27 +172,27 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
     grid-template-columns:1fr; max-width:100%;
     border-radius:0; border:none; box-shadow:none; min-height:100vh;
   }
-  /* Sembunyikan panel hijau sepenuhnya */
   .brand{ display:none }
-  /* Form full width, terpusat, dengan padding nyaman */
   .form{
-    padding:40px 28px 48px;
-    display:flex; flex-direction:column; justify-content:center;
+    padding:52px 28px 48px;
+    display:flex; flex-direction:column; justify-content:flex-start;
     min-height:100vh;
   }
-  /* Tampilkan logo SMART di atas form */
-  .mobile-logo{
-    display:flex; align-items:center; margin-bottom:28px;
+  .mobile-header{
+    display:flex; align-items:center; gap:14px; margin-bottom:10px;
+    padding:14px 16px; background:var(--kertas); border:1px solid var(--garis);
+    border-radius:14px;
   }
-  .mobile-logo img{ height:52px; width:auto }
+  .mh-tagline{
+    display:block; font-size:14px; color:var(--daun); font-weight:700;
+    text-align:center; letter-spacing:.01em; margin-bottom:28px;
+  }
 }
 
 /* ── Mobile kecil (≤480px) ──────────────────────── */
 @media(max-width:480px){
-  .form{ padding:32px 22px 44px }
-  .form-head h2{ font-size:24px }
-  .mobile-logo{ margin-bottom:24px }
-  .mobile-logo img{ height:44px }
+  .form{ padding:40px 20px 44px }
+  .mh-tagline{ margin-bottom:24px }
   .row{ flex-direction:column; align-items:flex-start; gap:12px; margin-bottom:18px }
 }
 </style>
@@ -251,30 +251,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
   <!-- ══════════ KANAN: FORM ══════════ -->
   <div class="form">
 
-    <!-- Badge mini app (tampil di mobile saat brand tersembunyi) -->
-    <div class="app-badge" style="display:none" id="mobileBadge">
-      <img class="badge-logo" src="{{ asset('images/logo-rt.png') }}" alt="RT"
-           onerror="this.style.display='none';document.querySelector('.app-badge-fallback').style.display='flex'">
-      <div class="app-badge-fallback" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10h14V10"/></svg>
+    <!-- Header mobile — tampil di semua ukuran mobile -->
+    <div class="mobile-header">
+      <div class="mh-logo">
+        <img src="{{ asset('images/logo-rt.png') }}" alt="Logo RT 001"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="mh-logo-fallback">
+          <span>001</span>
+        </div>
       </div>
-      <div class="app-badge-info">
+      <div class="mh-info">
         <b>SMART</b>
-        <span>RT 001 · RW 015 · Perum Permata Regency</span>
+        <span class="mh-lokasi">RT 001/015 Perum Permata Regency</span>
       </div>
     </div>
-
-    <!-- Logo SMART — hanya tampil di mobile -->
-    <div class="mobile-logo">
-      <img src="{{ asset('images/logo-smart.png') }}" alt="SMART"
-           onerror="this.style.display='none'">
-    </div>
-
-    <div class="form-head">
-      <div class="eyebrow">Selamat datang kembali</div>
-      <h2>Masuk ke akun Anda</h2>
-      <p>Masukkan username dan kata sandi akun SMART Anda.</p>
-    </div>
+    <p class="mh-tagline">Sistem Manajemen Administrasi Rukun Tetangga</p>
 
     <form method="POST" action="{{ route('login') }}">
       @csrf
@@ -323,7 +314,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 
     <div class="divider">atau</div>
     <p class="help">Belum punya akses? <a href="#" onclick="return false">Hubungi pengurus RT</a></p>
-    <p class="formfoot">© 2026 RT 001 / RW 015 · Perum Permata Regency · SMART v1.0</p>
   </div>
 </div>
 
@@ -339,13 +329,6 @@ function togglePass(){
     ic.innerHTML='<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
-
-// Tampilkan badge mobile saat layar kecil
-function checkMobile(){
-  document.getElementById('mobileBadge').style.display = window.innerWidth <= 480 ? 'flex' : 'none';
-}
-checkMobile();
-window.addEventListener('resize', checkMobile);
 
 // Loading state saat submit
 document.querySelector('form').addEventListener('submit', function(){

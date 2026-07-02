@@ -31,14 +31,14 @@
       <div class="keu-head-icon" style="background:var(--daun-pucat);color:var(--daun)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
-      <div><h3 id="roleModalTitle">Tambah Role</h3><p class="keu-sub">Data peran / hak akses pengguna</p></div>
+      <h3 id="roleModalTitle">Tambah Role</h3>
     </div>
     <form onsubmit="return false" class="keu-body">
       <input type="hidden" id="r_id">
       <div class="ff">
         <label>Nama Role <span class="req">*</span></label>
         <div id="r_nama"></div>
-        <div class="fhint" id="namaHint">Hanya huruf kecil dan underscore. Contoh: <code>koordinator</code>, <code>kepala_rw</code>. <strong>Tidak bisa diubah setelah disimpan</strong> — digunakan sebagai kunci sistem.</div>
+        <div class="fhint" id="namaHint" style="display:none"></div>
       </div>
       <div class="ff"><label>Label (tampilan) <span class="req">*</span></label><div id="r_label"></div></div>
       <div class="ff"><label>Keterangan</label><div id="r_keterangan"></div></div>
@@ -46,7 +46,7 @@
     <div class="keu-foot">
       <button class="mbtn ghost" onclick="roleClose()">Batal</button>
       <button class="mbtn mbtn-save" onclick="roleSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Simpan
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan
       </button>
     </div>
   </div>
@@ -61,7 +61,6 @@
       </div>
       <div>
         <h3 id="menuAccessTitle">Pengaturan Akses Menu</h3>
-        <p class="keu-sub" id="menuAccessSub">Centang menu yang boleh diakses oleh role ini</p>
       </div>
     </div>
     <div style="padding:16px 20px;max-height:65vh;overflow-y:auto">
@@ -80,7 +79,7 @@
     <div class="keu-foot">
       <button class="mbtn ghost" onclick="menuAccessClose()">Batal</button>
       <button class="mbtn mbtn-save" onclick="saveMenuAccess()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Simpan Akses Menu
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan Akses Menu
       </button>
     </div>
   </div>
@@ -109,7 +108,7 @@
 .btn-ubah{background:var(--emas)!important;color:#fff!important}.btn-ubah:hover{filter:brightness(1.08)}
 .btn-hapus{background:var(--stempel)!important;color:#fff!important}.btn-hapus:hover{filter:brightness(1.08)}
 .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none}
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);overflow:auto;box-shadow:var(--shadow)}
 #gridRole,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridRole .dx-datagrid{border:none;color:var(--tinta)}
 #gridRole .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -145,20 +144,28 @@
 .keu-head-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
 .keu-head-icon svg{width:17px;height:17px}
 .keu-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
-.keu-sub{font-size:12px;color:var(--redup);margin:0}
 .keu-body{padding:18px 20px;display:flex;flex-direction:column;gap:0}
 .ff{margin-bottom:13px;display:flex;flex-direction:column}
 .ff>label{font-size:12px;font-weight:700;margin-bottom:5px;color:var(--redup)}
 .fhint{font-size:11.5px;color:var(--redup);margin-top:4px}
 .fhint code{background:var(--kertas-2);padding:1px 5px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
 .req{color:var(--stempel)}
-.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 20px 20px}
-.keu-foot .mbtn{flex:0 0 auto}
-.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
-.mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
+.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
+.keu-foot .mbtn{flex:0 0 auto;min-width:90px}
+.keu-foot .mbtn.ghost{background:var(--stempel-soft);color:var(--stempel);border:1.5px solid #f5c6bb}
+.keu-foot .mbtn.ghost:hover{background:#fde5e0}
+.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:13px;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
+.mbtn-save:hover{background:var(--hutan-2)}
+.mbtn-save svg{width:13px;height:13px}
 
 .btn-access{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:5px 12px;border-radius:7px;border:1.5px solid var(--biru);color:var(--biru);background:var(--biru-soft);cursor:pointer;transition:.13s}
 .btn-access:hover{background:var(--biru);color:#fff}
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -184,7 +191,9 @@ $(function(){
     dataSource: new DevExpress.data.CustomStore({key:"id", load:()=>$.getJSON(urlList)}),
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%", height:"100%",
-    columnAutoWidth:true, focusedRowEnabled:true,
+    columnAutoWidth:true,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
+    focusedRowEnabled:true,
     onFocusedRowChanged: e=>{ focusedRow=e.row?e.row.data:null; },
     paging:{enabled:false},
     columns:[
@@ -230,7 +239,7 @@ function roleAdd(){
   var namaTB = $("#r_nama").dxTextBox("instance");
   namaTB.option("value","");
   namaTB.option("disabled",false);
-  document.getElementById('namaHint').innerHTML='Hanya huruf kecil dan underscore. Contoh: <code>koordinator</code>, <code>kepala_rw</code>. <strong>Tidak bisa diubah setelah disimpan</strong> — digunakan sebagai kunci sistem.';
+  document.getElementById('namaHint').style.display='none';
   $("#r_label").dxTextBox("instance").option("value","");
   $("#r_keterangan").dxTextBox("instance").option("value","");
   document.getElementById('roleModal').classList.add('show');
@@ -246,7 +255,9 @@ function roleEdit(){
   var namaTB = $("#r_nama").dxTextBox("instance");
   namaTB.option("value", d.nama||"");
   namaTB.option("disabled", true);
-  document.getElementById('namaHint').innerHTML='<span style="color:var(--emas);font-weight:600">🔒 Nama role tidak dapat diubah — digunakan sebagai kunci sistem di kode PHP. Ubah <strong>Label</strong> untuk mengubah tampilan.</span>';
+  var hint=document.getElementById('namaHint');
+  hint.innerHTML='<span style="color:var(--redup)">🔒 Nama role tidak dapat diubah setelah disimpan.</span>';
+  hint.style.display='';
   $("#r_label").dxTextBox("instance").option("value",d.label||"");
   $("#r_keterangan").dxTextBox("instance").option("value",d.keterangan||"");
   document.getElementById('roleModal').classList.add('show');

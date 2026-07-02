@@ -39,7 +39,6 @@
       </div>
       <div>
         <h3>Upload Data Warga</h3>
-        <p class="wg-sub">Import data dari file Excel (.xlsx)</p>
       </div>
     </div>
 
@@ -78,7 +77,6 @@
       </div>
       <div>
         <h3 id="kkModalTitle">Tambah Kartu Keluarga</h3>
-        <p id="kkModalSub" class="wg-sub">Lengkapi data kepala keluarga dan rumah</p>
       </div>
     </div>
 
@@ -116,14 +114,14 @@
 
       <div class="mf-switch">
         <div id="kk_aktif"></div>
-        <div><strong>KK Aktif</strong><span>KK terdaftar dan tinggal di RT ini</span></div>
+        <label class="mf-switch-lbl">KK Aktif</label>
       </div>
     </form>
 
     <div class="wg-foot">
       <button class="mbtn ghost" type="button" onclick="kkClose()">Batal</button>
       <button class="mbtn mbtn-save" type="button" onclick="kkSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         Simpan
       </button>
     </div>
@@ -139,7 +137,6 @@
       </div>
       <div>
         <h3 id="wargaModalTitle">Tambah Anggota</h3>
-        <p id="wargaModalSub" class="wg-sub">Isi data anggota keluarga</p>
       </div>
     </div>
 
@@ -207,7 +204,7 @@
     <div class="wg-foot">
       <button class="mbtn ghost" type="button" onclick="wargaClose()">Batal</button>
       <button class="mbtn mbtn-save" type="button" onclick="wargaSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         Simpan
       </button>
     </div>
@@ -241,7 +238,13 @@
 .wg-actions { display:flex;gap:8px;align-items:center;flex-shrink:0 }
 
 /* Grid */
-.grid-wrap { background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);height:calc(100vh - 162px) }
+.grid-wrap { background:var(--surface);border:1px solid var(--garis);overflow:auto;box-shadow:var(--shadow);height:calc(100vh - 148px) }
+@media(max-width:640px){
+  .wg-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .wg-title{font-size:18px}
+  .wg-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 200px)}
+}
 
 /* Buttons */
 .btn-ubah  { background:var(--emas) !important;color:#fff !important }
@@ -285,7 +288,7 @@
 .btn-sm { font-size:12px;padding:6px 12px;border-radius:8px }
 
 /* Warga sub-grid */
-.warga-grid .dx-datagrid { border:1px solid var(--garis);border-radius:10px }
+.warga-grid .dx-datagrid { border:1px solid var(--garis) }
 .warga-grid .dx-datagrid-headers .dx-header-row > td { font-size:10px;padding:9px 12px }
 .warga-grid .dx-data-row > td { padding:8px 12px;font-size:13px }
 
@@ -314,7 +317,6 @@
 .wg-head-icon { flex:0 0 34px;width:34px;height:34px;border-radius:9px;background:var(--daun-pucat);color:var(--daun);display:flex;align-items:center;justify-content:center }
 .wg-head-icon svg { width:17px;height:17px }
 .wg-head h3 { font-size:15px;font-weight:800;margin:0 0 1px }
-.wg-sub     { font-size:12px;color:var(--redup);margin:0 }
 .wg-body    { padding:18px 20px;display:flex;flex-direction:column;gap:0;max-height:70vh;overflow-y:auto }
 .kk-info-box { display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--daun-pucat);border:1px solid #cfe1d6;border-radius:9px;margin-bottom:14px }
 .kk-info-box svg { flex:0 0 14px;color:var(--daun) }
@@ -326,12 +328,12 @@
 .ff3 { display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px }
 .req { color:var(--stempel) }
 .hint { font-size:11px;color:#9aa89f;font-weight:500 }
-.mf-switch { display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--kertas);border:1px solid var(--garis);border-radius:9px;margin-top:2px }
-.mf-switch strong { display:block;font-size:12.5px;font-weight:700;color:var(--tinta) }
-.mf-switch span   { font-size:11.5px;color:var(--redup) }
-.wg-foot { display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 20px 20px }
-.wg-foot .mbtn { flex:0 0 auto }
-.mbtn-save { display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:11px 22px;border-radius:10px;border:none;cursor:pointer;transition:.14s }
+.mf-switch { display:flex;align-items:center;gap:8px;margin-top:4px }
+.wg-foot { display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px }
+.wg-foot .mbtn { flex:0 0 auto; min-width:90px }
+.wg-foot .mbtn.ghost { background:var(--stempel-soft);color:var(--stempel);border:1.5px solid #f5c6bb }
+.wg-foot .mbtn.ghost:hover { background:#fde5e0 }
+.mbtn-save { display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:13px;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:.14s }
 .mbtn-save:hover { background:var(--hutan-2) }
 .mbtn-save svg { width:14px;height:14px }
 
@@ -448,6 +450,7 @@ $(function() {
     showBorders: false, showColumnLines: true, showRowLines: true,
     rowAlternationEnabled: true, width:"100%", height:"100%",
     columnAutoWidth: true, wordWrapEnabled: false,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     headerFilter: { visible: true },
     paging: { pageSize: 50 },
     pager: { visible:true, displayMode:"compact", showPageSizeSelector:true, allowedPageSizes:[25,50,"all"], showInfo:true, showNavigationButtons:true },
@@ -476,7 +479,7 @@ $(function() {
         }
       },
       {
-        dataField:"kepala_keluarga", caption:"Kepala Keluarga", minWidth:190,
+        dataField:"kepala_keluarga", caption:"Kepala Keluarga", width:200,
         cellTemplate: function(c, o) {
           var wrap = $('<div>');
           $('<div style="font-weight:600;font-size:13.5px">').text(o.value || '—').appendTo(wrap);
@@ -501,7 +504,7 @@ $(function() {
         }
       },
       {
-        dataField:"alamat", caption:"Alamat", minWidth:160,
+        dataField:"alamat", caption:"Alamat", width:180,
         cellTemplate: function(c, o) {
           $('<span style="font-size:12.5px;color:var(--redup)">').text(o.value || '—').appendTo(c);
         }

@@ -33,27 +33,24 @@
 <div class="is-summary">
   <div class="is-card s-lunas">
     <div class="is-lbl">Lunas</div>
-    <div class="is-val" id="sLunas">0</div>
-    <div class="is-sub">tagihan</div>
+    <div class="is-row"><span class="is-val" id="sLunas">0</span><span class="is-sub">tagihan</span></div>
   </div>
   <div class="is-card s-sebagian">
     <div class="is-lbl">Sebagian</div>
-    <div class="is-val" id="sSebagian">0</div>
-    <div class="is-sub">tagihan</div>
+    <div class="is-row"><span class="is-val" id="sSebagian">0</span><span class="is-sub">tagihan</span></div>
   </div>
   <div class="is-card s-belum">
     <div class="is-lbl">Belum Bayar</div>
-    <div class="is-val" id="sBelum">0</div>
-    <div class="is-sub">tagihan</div>
+    <div class="is-row"><span class="is-val" id="sBelum">0</span><span class="is-sub">tagihan</span></div>
   </div>
   <div class="is-card s-tunggakan">
     <div class="is-lbl">Total Tunggakan</div>
-    <div class="is-val is-val-sm" id="sTunggakan">Rp 0</div>
+    <div class="is-row"><span class="is-val" id="sTunggakan">Rp 0</span></div>
   </div>
 </div>
 
 {{-- Grid --}}
-<div class="grid-wrap" style="height:calc(100vh - 280px)">
+<div class="grid-wrap" style="height:calc(100vh - 240px)">
   <div id="gridIuranSaya"></div>
 </div>
 
@@ -72,20 +69,20 @@
 .is-filter-label{font-size:11px;font-weight:700;color:var(--redup);letter-spacing:.06em;text-transform:uppercase}
 
 /* Summary cards */
-.is-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-.is-card{background:var(--surface);border:1px solid var(--garis);border-radius:12px;padding:16px 20px;position:relative;overflow:hidden}
-.is-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+.is-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
+.is-card{background:var(--surface);border:1px solid var(--garis);border-radius:8px;padding:7px 10px 7px 13px;position:relative;overflow:hidden}
+.is-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
 .s-lunas::before{background:#2D6A4F}
 .s-sebagian::before{background:var(--emas)}
 .s-belum::before{background:var(--stempel)}
 .s-tunggakan::before{background:var(--biru)}
-.is-lbl{font-size:11px;font-weight:700;color:var(--redup);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
-.is-val{font-size:28px;font-weight:800;color:var(--tinta);line-height:1}
-.is-val-sm{font-size:20px}
-.is-sub{font-size:11.5px;color:var(--redup);margin-top:4px}
+.is-lbl{font-size:10px;font-weight:600;color:var(--redup);letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
+.is-row{display:flex;align-items:baseline;gap:6px}
+.is-val{font-size:13.5px;font-weight:800;letter-spacing:-.01em;color:var(--tinta)}
+.is-sub{font-size:10.5px;color:var(--redup);font-weight:500}
 
 /* Grid */
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);overflow:auto;box-shadow:var(--shadow)}
 #gridIuranSaya,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridIuranSaya .dx-datagrid{border:none;color:var(--tinta)}
 #gridIuranSaya .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -103,6 +100,12 @@
 
 @media(max-width:900px){.is-summary{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.is-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){
+  .is-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .is-title{font-size:18px;white-space:normal}
+  .is-filters{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -148,6 +151,7 @@ $(function(){
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%", height:"100%",
     columnAutoWidth:true,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     filterRow:{ visible:false }, // filter dilakukan via dropdown di atas
     paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},

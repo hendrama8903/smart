@@ -6,6 +6,14 @@
   if (!function_exists('rp')) {
     function rp($n) { return 'Rp ' . number_format((float)$n, 0, ',', '.'); }
   }
+  if (!function_exists('rpShort')) {
+    function rpShort($n) {
+      $n = (float)$n;
+      if ($n >= 1000000) return number_format($n/1000000, 1, ',', '.') . ' jt';
+      if ($n >= 1000)    return number_format($n/1000, 0, ',', '.') . ' rb';
+      return (int)$n;
+    }
+  }
 @endphp
 
 {{-- Greeting + Filter Periode --}}
@@ -14,16 +22,13 @@
     <h1 class="db-title">Selamat datang, {{ $user->name }}</h1>
   </div>
   @if($isPengurus)
-  <form method="GET" action="{{ route('dashboard') }}" class="db-periode-form">
+  <div class="db-periode-form">
     <label class="db-periode-label">Periode</label>
-    <select name="periode" class="db-periode-select" onchange="this.form.submit()">
-      @foreach($periodeOptions as $opt)
-        <option value="{{ $opt['value'] }}" {{ $opt['value'] === $periodeInput ? 'selected' : '' }}>
-          {{ $opt['label'] }}
-        </option>
-      @endforeach
-    </select>
-  </form>
+    <div class="db-periode-selects">
+      <div id="dashBulanSelect" style="width:130px"></div>
+      <div id="dashTahunSelect" style="width:90px"></div>
+    </div>
+  </div>
   @endif
 </div>
 
@@ -76,96 +81,22 @@
   $pctBelum = $totalJml > 0 ? round($belumJml/$totalJml*100) : 0;
 @endphp
 
-<div class="db-grid3">
-  {{-- Kolom 1: Iuran progress + Piutang --}}
-  <div class="db-iuran-card">
-    <div class="db-section-title">Iuran {{ $bulan }}</div>
-    <div class="db-iuran-bars">
-      <div class="db-iuran-row"><span class="db-ib-label">Lunas</span><div class="db-ib-bar"><div class="db-ib-fill db-ib-lunas" style="width:{{ $pctLunas }}%"></div></div><span class="db-ib-num">{{ $lunasJml }} KK</span></div>
-      <div class="db-iuran-row"><span class="db-ib-label">Sebagian</span><div class="db-ib-bar"><div class="db-ib-fill db-ib-sebagian" style="width:{{ $pctSeba }}%"></div></div><span class="db-ib-num">{{ $sebaJml }} KK</span></div>
-      <div class="db-iuran-row"><span class="db-ib-label">Belum</span><div class="db-ib-bar"><div class="db-ib-fill db-ib-belum" style="width:{{ $pctBelum }}%"></div></div><span class="db-ib-num">{{ $belumJml }} KK</span></div>
-      @if($totalJml === 0)<p style="font-size:12.5px;color:var(--redup);text-align:center;padding:8px 0">Belum ada tagihan</p>@endif
-    </div>
-    @if($piutangAktif > 0)
-    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--garis)">
-      <div style="font-size:11px;font-weight:700;color:var(--redup);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Piutang Aktif</div>
-      <div style="font-size:18px;font-weight:800;color:var(--stempel)">{{ $piutangAktif }} orang</div>
-      <div style="font-size:11.5px;color:var(--redup)">{{ rp($piutangTotal) }} belum kembali</div>
-    </div>
-    @endif
+<div class="db-iuran-card" style="margin-bottom:14px">
+  <div class="db-section-title">Iuran {{ $bulan }}</div>
+  <div class="db-iuran-bars">
+    <div class="db-iuran-row"><span class="db-ib-label">Lunas</span><div class="db-ib-bar"><div class="db-ib-fill db-ib-lunas" style="width:{{ $pctLunas }}%"></div></div><span class="db-ib-num">{{ $lunasJml }} KK</span></div>
+    <div class="db-iuran-row"><span class="db-ib-label">Sebagian</span><div class="db-ib-bar"><div class="db-ib-fill db-ib-sebagian" style="width:{{ $pctSeba }}%"></div></div><span class="db-ib-num">{{ $sebaJml }} KK</span></div>
+    <div class="db-iuran-row"><span class="db-ib-label">Belum</span><div class="db-ib-bar"><div class="db-ib-fill db-ib-belum" style="width:{{ $pctBelum }}%"></div></div><span class="db-ib-num">{{ $belumJml }} KK</span></div>
+    @if($totalJml === 0)<p style="font-size:12.5px;color:var(--redup);text-align:center;padding:8px 0">Belum ada tagihan</p>@endif
   </div>
-
-  {{-- Kolom 2: Pembayaran Iuran --}}
-  <div class="db-card">
-    <div class="db-card-head">
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Pembayaran Iuran Terbaru</h3>
-      <a class="db-link" href="{{ route('iuran.index') }}">Lihat semua →</a>
-    </div>
-    <div class="db-card-body">
-      @forelse($iuranTerbaru as $t)
-      <div class="db-list-item">
-        <div class="db-li-av">{{ mb_substr(optional($t->kartuKeluarga)->kepala_keluarga ?? '?', 0, 1) }}</div>
-        <div class="db-li-info">
-          <b>{{ optional($t->kartuKeluarga)->kepala_keluarga ?? '—' }}</b>
-          <span>{{ optional($t->jenisIuran)->nama }} · {{ optional($t->periode)->format('m/Y') }}</span>
-        </div>
-        <div class="db-li-right">
-          <span class="db-pill {{ $t->status === 'lunas' ? 'db-pill-lunas' : 'db-pill-sebagian' }}">{{ $t->status === 'lunas' ? 'Lunas' : 'Sebagian' }}</span>
-          <span class="db-mono">+{{ rp($t->nominal_dibayar) }}</span>
-        </div>
-      </div>
-      @empty<p class="db-empty">Belum ada pembayaran.</p>@endforelse
-    </div>
+  @if($piutangAktif > 0)
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--garis)">
+    <div style="font-size:11px;font-weight:700;color:var(--redup);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Piutang Aktif</div>
+    <div style="font-size:18px;font-weight:800;color:var(--stempel)">{{ $piutangAktif }} orang</div>
+    <div style="font-size:11.5px;color:var(--redup)">{{ rp($piutangTotal) }} belum kembali</div>
   </div>
-
-  {{-- Kolom 3: Kas Terbaru --}}
-  <div class="db-card">
-    <div class="db-card-head">
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Transaksi Kas Terbaru</h3>
-      <a class="db-link" href="{{ route('kas.index') }}">Lihat semua →</a>
-    </div>
-    <div class="db-card-body">
-      @forelse($kasTerbaru as $k)
-      <div class="db-list-item">
-        <div class="db-li-av db-li-av-{{ $k->tipe === 'masuk' ? 'in' : 'out' }}">{{ $k->tipe === 'masuk' ? '+' : '−' }}</div>
-        <div class="db-li-info">
-          <b>{{ optional($k->kategori)->nama ?? '—' }}</b>
-          <span>{{ $k->keterangan ?? '' }} · {{ $k->tanggal?->format('d/m/Y') }}</span>
-        </div>
-        <div class="db-li-right">
-          <span class="db-mono {{ $k->tipe === 'masuk' ? 'db-in' : 'db-out' }}">{{ $k->tipe === 'masuk' ? '+' : '-' }}{{ rp($k->jumlah) }}</span>
-        </div>
-      </div>
-      @empty<p class="db-empty">Belum ada transaksi.</p>@endforelse
-    </div>
-  </div>
+  @endif
 </div>
-
-{{-- Pengumuman Terbaru --}}
-@if($pengumumanTerbaru->isNotEmpty())
-<div class="db-card" style="margin-top:16px">
-  <div class="db-card-head">
-    <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Pengumuman Terbaru</h3>
-    <a class="db-link" href="{{ route('pengumuman.publik') }}">Lihat semua →</a>
-  </div>
-  <div class="db-card-body">
-    @foreach($pengumumanTerbaru as $pg)
-    <div class="db-pg-item {{ $pg->penting ? 'db-pg-penting' : '' }}">
-      <span class="db-pg-kat db-pg-kat-{{ $pg->kategori }}">{{ $pg->kategori_label }}</span>
-      <div class="db-pg-info">
-        <div class="db-pg-judul">{{ $pg->judul }}@if($pg->penting) 🔴@endif</div>
-        <div class="db-pg-meta">
-          {{ $pg->tanggal?->locale('id')->isoFormat('D MMMM YYYY') }} · {{ optional($pg->pembuat)->name ?? 'Pengurus RT' }}
-          @if($pg->nama_file)
-            · <a href="{{ $pg->file_url }}" target="_blank" style="color:var(--biru);font-weight:700" download>📎 {{ $pg->nama_file }}</a>
-          @endif
-        </div>
-      </div>
-    </div>
-    @endforeach
-  </div>
-</div>
-@endif
 
 {{-- Cashflow chart --}}
 <div class="db-card" style="margin-top:16px">
@@ -173,24 +104,30 @@
     <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Cashflow 6 Bulan Terakhir</h3>
   </div>
   <div class="db-cashflow">
-    @php $maxVal = 1; foreach($cashflow as $_cf){ $v = max($_cf['masuk'],$_cf['keluar']); if($v>$maxVal)$maxVal=$v; } @endphp
-    @foreach($cashflow as $cf)
-    @php $kasUrl = route('kas.index') . '?bulan=' . $cf['bulan']; @endphp
-    <div class="db-cf-col">
-      <div class="db-cf-bars">
-        <a href="{{ $kasUrl }}&tipe=masuk" class="db-cf-bar db-cf-masuk db-cf-click"
-           style="height:{{ round($cf['masuk']/$maxVal*100) }}%"
-           title="Masuk {{ $cf['label'] }}: {{ rp($cf['masuk']) }} — Klik untuk detail"></a>
-        <a href="{{ $kasUrl }}&tipe=keluar" class="db-cf-bar db-cf-keluar db-cf-click"
-           style="height:{{ round($cf['keluar']/$maxVal*100) }}%"
-           title="Keluar {{ $cf['label'] }}: {{ rp($cf['keluar']) }} — Klik untuk detail"></a>
-      </div>
-      <div class="db-cf-label">{{ $cf['label'] }}</div>
-    </div>
-    @endforeach
     <div class="db-cf-legend">
       <span><i class="db-dot db-dot-masuk"></i> Masuk</span>
       <span><i class="db-dot db-dot-keluar"></i> Keluar</span>
+    </div>
+    <div class="db-cf-chart">
+      @php $maxVal = 1; foreach($cashflow as $_cf){ $v = max($_cf['masuk'],$_cf['keluar']); if($v>$maxVal)$maxVal=$v; } @endphp
+      @foreach($cashflow as $cf)
+      @php $kasUrl = route('kas.index') . '?bulan=' . $cf['bulan']; @endphp
+      <div class="db-cf-col">
+        <div class="db-cf-amounts">
+          @if($cf['masuk'] > 0)<span class="db-cf-amt-masuk">{{ rpShort($cf['masuk']) }}</span>@endif
+          @if($cf['keluar'] > 0)<span class="db-cf-amt-keluar">{{ rpShort($cf['keluar']) }}</span>@endif
+        </div>
+        <div class="db-cf-bars">
+          <a href="{{ $kasUrl }}&tipe=masuk" class="db-cf-bar db-cf-masuk db-cf-click"
+             style="height:{{ round($cf['masuk']/$maxVal*100) }}%"
+             title="Masuk {{ $cf['label'] }}: {{ rp($cf['masuk']) }}"></a>
+          <a href="{{ $kasUrl }}&tipe=keluar" class="db-cf-bar db-cf-keluar db-cf-click"
+             style="height:{{ round($cf['keluar']/$maxVal*100) }}%"
+             title="Keluar {{ $cf['label'] }}: {{ rp($cf['keluar']) }}"></a>
+        </div>
+        <div class="db-cf-label">{{ $cf['label'] }}</div>
+      </div>
+      @endforeach
     </div>
   </div>
 </div>
@@ -210,24 +147,24 @@
 .content{max-width:none;padding-bottom:32px}
 
 .db-greeting{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px;gap:16px;flex-wrap:wrap}
-.db-title{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0}
+.db-title{font-size:18px;font-weight:700;letter-spacing:-.01em;margin:0}
 .db-periode-form{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
 .db-periode-label{font-size:11px;font-weight:700;color:var(--redup);letter-spacing:.06em;text-transform:uppercase}
-.db-periode-select{padding:8px 34px 8px 14px;border:1.5px solid var(--garis-2);border-radius:10px;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--tinta);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236A7A70' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center;appearance:none;cursor:pointer;outline:none;transition:.15s}
-.db-periode-select:focus{border-color:var(--daun);box-shadow:0 0 0 3px rgba(45,106,79,.1)}
+.db-periode-selects{display:flex;gap:6px;align-items:center}
+#dashBulanSelect .dx-texteditor,#dashTahunSelect .dx-texteditor{border-radius:10px;font-size:13.5px;font-weight:600}
 
 .db-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
 .db-stats-2{grid-template-columns:repeat(3,1fr)}
 .db-grid3{display:grid;grid-template-columns:1fr 1.4fr 1.4fr;gap:14px;margin-bottom:14px}
-.db-stat{background:var(--surface);border:1px solid var(--garis);border-radius:14px;padding:18px 20px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.db-stat{background:var(--surface);border:1px solid var(--garis);border-radius:14px;padding:14px 16px 12px;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .db-stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--daun)}
 .db-stat-emas::before{background:var(--emas)}.db-stat-stempel::before{background:var(--stempel)}.db-stat-biru::before{background:var(--biru)}
-.db-stat-lbl{font-size:12px;color:var(--redup);font-weight:600;display:flex;align-items:center;gap:7px;margin-bottom:10px}
-.db-stat-lbl svg{width:15px;height:15px;color:var(--daun);flex:0 0 15px}
+.db-stat-lbl{font-size:11.5px;color:var(--redup);font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.db-stat-lbl svg{width:14px;height:14px;color:var(--daun);flex:0 0 14px}
 .db-stat-emas .db-stat-lbl svg{color:var(--emas)}.db-stat-stempel .db-stat-lbl svg{color:var(--stempel)}.db-stat-biru .db-stat-lbl svg{color:var(--biru)}
-.db-stat-val{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
-.db-stat-val small{font-size:14px;color:var(--redup);font-weight:600}
-.db-stat-sub{font-size:11.5px;color:var(--redup)}
+.db-stat-val{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.db-stat-val small{font-size:13px;color:var(--redup);font-weight:600}
+.db-stat-sub{font-size:11px;color:var(--redup)}
 .db-up{color:#2D6A4F;font-weight:700}.db-down{color:var(--stempel);font-weight:700}
 
 .db-iuran-card{background:var(--surface);border:1px solid var(--garis);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
@@ -275,16 +212,20 @@
 .db-pg-meta{font-size:11.5px;color:var(--redup);margin-top:3px}
 
 /* Cashflow */
-.db-cashflow{padding:16px 20px 10px;position:relative;display:flex;align-items:flex-end;gap:10px;min-height:160px}
-.db-cf-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
-.db-cf-bars{display:flex;align-items:flex-end;gap:3px;height:120px;width:100%}
+.db-cashflow{padding:14px 20px 14px}
+.db-cf-legend{display:flex;gap:14px;font-size:12px;font-weight:600;color:var(--redup);margin-bottom:12px;justify-content:flex-end}
+.db-cf-legend span{display:flex;align-items:center;gap:5px}
+.db-cf-chart{display:flex;align-items:flex-end;gap:6px}
+.db-cf-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.db-cf-amounts{display:flex;flex-direction:column;align-items:center;gap:1px;min-height:30px;justify-content:flex-end}
+.db-cf-amt-masuk{font-size:9px;font-weight:700;color:#2D6A4F;line-height:1.3}
+.db-cf-amt-keluar{font-size:9px;font-weight:700;color:var(--stempel);line-height:1.3}
+.db-cf-bars{display:flex;align-items:flex-end;gap:3px;height:110px;width:100%}
 .db-cf-bar{flex:1;border-radius:4px 4px 0 0;transition:height .4s ease;min-height:3px}
 .db-cf-masuk{background:#2D6A4F}.db-cf-keluar{background:var(--stempel)}
 .db-cf-click{display:block;text-decoration:none;cursor:pointer;transition:filter .15s,transform .15s}
 .db-cf-click:hover{filter:brightness(1.2);transform:scaleY(1.04);transform-origin:bottom}
-.db-cf-label{font-size:11.5px;color:var(--redup);font-weight:600}
-.db-cf-legend{position:absolute;top:14px;right:20px;display:flex;gap:14px;font-size:12px;font-weight:600;color:var(--redup)}
-.db-cf-legend span{display:flex;align-items:center;gap:5px}
+.db-cf-label{font-size:11px;color:var(--redup);font-weight:600}
 .db-dot{display:inline-block;width:10px;height:10px;border-radius:3px}
 .db-dot-masuk{background:#2D6A4F}.db-dot-keluar{background:var(--stempel)}
 
@@ -297,4 +238,44 @@
 @media(max-width:1100px){.db-stats{grid-template-columns:repeat(2,1fr)}.db-grid3{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.db-stats{grid-template-columns:1fr 1fr}.db-grid3,.db-grid2{grid-template-columns:1fr}}
 </style>
+@endpush
+
+@push('scripts')
+<script>
+$(function(){
+  @if($isPengurus)
+  var bulanData = @json($bulanOptions);
+  var tahunData = @json($tahunOptions);
+  var curBulan  = {{ $bulanInput }};
+  var curTahun  = {{ $tahunInput }};
+  var baseUrl   = "{{ route('dashboard') }}";
+
+  function goDashboard(tahun, bulan){
+    window.location.href = baseUrl + "?tahun=" + tahun + "&bulan=" + bulan;
+  }
+
+  $("#dashBulanSelect").dxSelectBox({
+    dataSource  : bulanData,
+    valueExpr   : "value",
+    displayExpr : "label",
+    value       : curBulan,
+    onValueChanged: function(e){
+      var tahun = $("#dashTahunSelect").dxSelectBox("instance").option("value");
+      goDashboard(tahun, e.value);
+    }
+  });
+
+  $("#dashTahunSelect").dxSelectBox({
+    dataSource  : tahunData,
+    valueExpr   : "value",
+    displayExpr : "label",
+    value       : curTahun,
+    onValueChanged: function(e){
+      var bulan = $("#dashBulanSelect").dxSelectBox("instance").option("value");
+      goDashboard(e.value, bulan);
+    }
+  });
+  @endif
+});
+</script>
 @endpush

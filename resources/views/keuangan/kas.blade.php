@@ -49,7 +49,7 @@
       <div class="keu-head-icon" id="kasModalIcon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
       </div>
-      <div><h3 id="kasModalTitle">Kas Masuk</h3><p class="keu-sub" id="kasModalSub">Catat pemasukan kas RT</p></div>
+      <h3 id="kasModalTitle">Kas Masuk</h3>
     </div>
     <form id="formKas" onsubmit="return false" class="keu-body">
       <input type="hidden" id="k_id">
@@ -74,7 +74,7 @@
     <div class="keu-foot">
       <button class="mbtn ghost" onclick="kasClose()">Batal</button>
       <button class="mbtn mbtn-save" onclick="kasSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Simpan
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan
       </button>
     </div>
   </div>
@@ -115,7 +115,7 @@
 .sum-sub{font-size:11px;color:var(--redup);margin-top:3px}
 
 /* Grid */
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);overflow:auto;box-shadow:var(--shadow)}
 #gridKas,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridKas .dx-datagrid{border:none;color:var(--tinta)}
 #gridKas .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -139,21 +139,29 @@
 .keu-head-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
 .keu-head-icon svg{width:17px;height:17px}
 .keu-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
-.keu-sub{font-size:12px;color:var(--redup);margin:0}
 .keu-body{padding:18px 20px;display:flex;flex-direction:column;gap:0}
 .ff{margin-bottom:13px;display:flex;flex-direction:column}
 .ff>label{font-size:12px;font-weight:700;margin-bottom:5px;color:var(--redup)}
 .ff2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .hint{font-size:11px;color:#9aa89f;font-weight:500}
 .req{color:var(--stempel)}
-.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 20px 20px}
-.keu-foot .mbtn{flex:0 0 auto}
-.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
-.mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
+.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
+.keu-foot .mbtn{flex:0 0 auto;min-width:90px}
+.keu-foot .mbtn.ghost{background:var(--stempel-soft);color:var(--stempel);border:1.5px solid #f5c6bb}
+.keu-foot .mbtn.ghost:hover{background:#fde5e0}
+.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:13px;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
+.mbtn-save:hover{background:var(--hutan-2)}
+.mbtn-save svg{width:13px;height:13px}
 .bukti-wrap{display:flex;align-items:flex-start;gap:12px}
 .bukti-preview{flex:0 0 52px;width:52px;height:52px;border-radius:9px;background:var(--kertas-2);border:1.5px solid var(--garis);display:flex;align-items:center;justify-content:center;color:var(--redup);overflow:hidden}
 .bukti-preview img{width:100%;height:100%;object-fit:cover}
 @media(max-width:900px){.kas-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -215,7 +223,9 @@ $(function(){
     }),
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%", height:"100%",
-    columnAutoWidth:true, focusedRowEnabled:true,
+    columnAutoWidth:true,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
+    focusedRowEnabled:true,
     onFocusedRowChanged:e=>{focusedRow=e.row?e.row.data:null;},
     headerFilter:{visible:true},
     paging:{pageSize:50},

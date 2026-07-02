@@ -23,7 +23,7 @@
   <div class="modal-card keu-card">
     <div class="keu-head">
       <div class="keu-head-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-      <div><h3 id="gangModalTitle">Tambah Gang</h3><p class="keu-sub" id="gangModalSub">Data lorong / blok RT</p></div>
+      <h3 id="gangModalTitle">Tambah Gang</h3>
     </div>
     <form id="formGang" onsubmit="return false" class="keu-body">
       <input type="hidden" id="g_id">
@@ -31,13 +31,13 @@
       <div class="ff"><label>Keterangan</label><div id="g_keterangan"></div></div>
       <div class="mf-switch">
         <div id="g_aktif"></div>
-        <div><strong>Gang Aktif</strong><span>Gang terdaftar dan aktif di RT</span></div>
+        <label class="mf-switch-lbl">Gang Aktif</label>
       </div>
     </form>
     <div class="keu-foot">
       <button class="mbtn ghost" onclick="gangClose()">Batal</button>
       <button class="mbtn mbtn-save" onclick="gangSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan
       </button>
     </div>
   </div>
@@ -62,7 +62,7 @@
 .keu-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:16px}
 .keu-title{font-size:24px;font-weight:800;letter-spacing:-.02em;color:var(--tinta);margin:0}
 .keu-actions{display:flex;gap:8px;align-items:center}
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);height:calc(100vh - 162px)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);overflow:auto;box-shadow:var(--shadow);height:calc(100vh - 162px)}
 .btn-ubah{background:var(--emas)!important;color:#fff!important}.btn-ubah:hover{filter:brightness(1.08)}
 .btn-hapus{background:var(--stempel)!important;color:#fff!important}.btn-hapus:hover{filter:brightness(1.08)}
 .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none}
@@ -84,19 +84,25 @@
 .keu-head-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;background:var(--daun-pucat);color:var(--daun);display:flex;align-items:center;justify-content:center}
 .keu-head-icon svg{width:17px;height:17px}
 .keu-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
-.keu-sub{font-size:12px;color:var(--redup);margin:0}
 .keu-body{padding:18px 20px;display:flex;flex-direction:column;gap:0}
 .ff{margin-bottom:13px;display:flex;flex-direction:column}
 .ff>label{font-size:12px;font-weight:700;margin-bottom:5px;color:var(--redup)}
 .fhint{font-size:11.5px;color:var(--redup);margin-top:4px}
 .req{color:var(--stempel)}
-.mf-switch{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--kertas);border:1px solid var(--garis);border-radius:9px;margin-top:2px}
-.mf-switch strong{display:block;font-size:12.5px;font-weight:700;color:var(--tinta)}
-.mf-switch span{font-size:11.5px;color:var(--redup)}
-.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 20px 20px}
-.keu-foot .mbtn{flex:0 0 auto}
-.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:11px 22px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
-.mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
+.mf-switch{display:flex;align-items:center;gap:8px;margin-top:4px}
+.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
+.keu-foot .mbtn{flex:0 0 auto;min-width:90px}
+.keu-foot .mbtn.ghost{background:var(--stempel-soft);color:var(--stempel);border:1.5px solid #f5c6bb}
+.keu-foot .mbtn.ghost:hover{background:#fde5e0}
+.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:13px;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
+.mbtn-save:hover{background:var(--hutan-2)}
+.mbtn-save svg{width:13px;height:13px}
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -119,7 +125,9 @@ $(function(){
     dataSource: new DevExpress.data.CustomStore({key:"id", load:()=>$.getJSON(urlList)}),
     showBorders:false, showColumnLines:true, showRowLines:true,
     rowAlternationEnabled:true, width:"100%", height:"100%",
-    columnAutoWidth:true, focusedRowEnabled:true,
+    columnAutoWidth:true,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
+    focusedRowEnabled:true,
     onFocusedRowChanged: e=>{ focusedRow = e.row?e.row.data:null; },
     paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[20,50,"all"],showInfo:true},

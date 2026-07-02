@@ -7,10 +7,9 @@
   $ikonList = ['dashboard','users','heart','bill','coins','building','shield','clipboard','card','menu','settings','truck','file'];
 @endphp
 
-<div class="page-head">
-  <div class="eyebrow">Pengaturan / Master Menu</div>
+<div class=”page-head”>
+  <div class=”eyebrow”>Pengaturan / Master Menu</div>
   <h1>{{ $menu->exists ? 'Ubah Menu' : 'Tambah Menu' }}</h1>
-  <p>Isi data menu. Untuk membuat sub-menu, pilih “Menu Induk”-nya.</p>
 </div>
 
 @if($errors->any())
@@ -30,12 +29,8 @@
     <div class="fgrid">
       <div class="frow">
         <label>Menu Induk</label>
-        <select name="parent_id">
-          <option value="">— Jadikan Menu Induk —</option>
-          @foreach($parents as $p)
-            <option value="{{ $p->id }}" @selected(old('parent_id', $menu->parent_id) == $p->id)>{{ $p->nama }}</option>
-          @endforeach
-        </select>
+        <input type="hidden" name="parent_id" id="hParentId" value="{{ old('parent_id', $menu->parent_id) }}">
+        <div id="dxParentId"></div>
         <div class="fhint">Kosongkan bila ini menu induk (level atas).</div>
       </div>
 
@@ -49,12 +44,8 @@
     <div class="fgrid">
       <div class="frow">
         <label>Icon</label>
-        <select name="icon">
-          <option value="">— Tanpa icon —</option>
-          @foreach($ikonList as $ik)
-            <option value="{{ $ik }}" @selected(old('icon', $menu->icon) === $ik)>{{ $ik }}</option>
-          @endforeach
-        </select>
+        <input type="hidden" name="icon" id="hIcon" value="{{ old('icon', $menu->icon) }}">
+        <div id="dxIcon"></div>
       </div>
 
       <div class="frow">
@@ -106,10 +97,11 @@
   .frow{margin-bottom:16px}
   .frow > label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:var(--tinta)}
   .req{color:var(--stempel)}
-  .frow input[type=text],.frow input[type=number],.frow select{
+  .frow input[type=text],.frow input[type=number]{
     width:100%;padding:11px 13px;border:1.5px solid var(--garis2);border-radius:10px;
     font-family:inherit;font-size:14px;background:#fff;color:var(--tinta);outline:none;transition:.15s}
-  .frow input:focus,.frow select:focus{border-color:var(--daun);box-shadow:0 0 0 4px rgba(45,106,79,.1)}
+  .frow input:focus{border-color:var(--daun);box-shadow:0 0 0 4px rgba(45,106,79,.1)}
+  .frow .dx-texteditor{border-radius:10px;font-size:14px}
   .fhint{font-size:12px;color:var(--redup);margin-top:5px}
   .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .factions{display:flex;gap:10px;margin-top:8px}
@@ -118,4 +110,33 @@
   .form-alert{background:#FBEAE6;border:1px solid #E9C3BA;color:#9A3422;font-size:13.5px;font-weight:600;padding:11px 14px;border-radius:11px;margin-bottom:18px}
   @media(max-width:600px){ .fgrid{grid-template-columns:1fr} }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+$(function(){
+  var parents = [{ id: '', nama: '— Jadikan Menu Induk —' }]
+    .concat(@json($parents->map(fn($p) => ['id' => (string)$p->id, 'nama' => $p->nama])->values()));
+  var icons = [{ v: '', l: '— Tanpa icon —' }]
+    .concat(@json(collect($ikonList)->map(fn($ik) => ['v' => $ik, 'l' => $ik])->values()));
+
+  $("#dxParentId").dxSelectBox({
+    dataSource  : parents,
+    valueExpr   : "id",
+    displayExpr : "nama",
+    value       : $("#hParentId").val(),
+    placeholder : "— Jadikan Menu Induk —",
+    onValueChanged: function(e){ $("#hParentId").val(e.value ?? ''); }
+  });
+
+  $("#dxIcon").dxSelectBox({
+    dataSource  : icons,
+    valueExpr   : "v",
+    displayExpr : "l",
+    value       : $("#hIcon").val(),
+    placeholder : "— Tanpa icon —",
+    onValueChanged: function(e){ $("#hIcon").val(e.value ?? ''); }
+  });
+});
+</script>
 @endpush

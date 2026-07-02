@@ -18,6 +18,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/notifikasi/data',         [\App\Http\Controllers\NotifikasiController::class, 'data'])->name('notifikasi.data');
+    Route::post('/notifikasi/baca-semua',  [\App\Http\Controllers\NotifikasiController::class, 'bacaSemua'])->name('notifikasi.baca-semua');
+    Route::post('/notifikasi/{id}/baca',   [\App\Http\Controllers\NotifikasiController::class, 'baca'])->name('notifikasi.baca');
 
     // ====== Contoh route khusus PENGURUS (RBAC) — diisi di langkah berikutnya ======
     Route::middleware('role:admin,ketua,sekretaris,bendahara')->group(function () {
@@ -66,12 +69,14 @@ Route::middleware('auth')->group(function () {
 
     // ── Keuangan: Iuran ─────────────────────────────────────────────────
     Route::middleware('menu.access')->group(function () {
-        Route::get('iuran',                 [\App\Http\Controllers\IuranController::class, 'index'])->name('iuran.index');
-        Route::get('iuran/list',            [\App\Http\Controllers\IuranController::class, 'tagihanList'])->name('iuran.list');
-        Route::get('iuran/context',         [\App\Http\Controllers\IuranController::class, 'context'])->name('iuran.context');
-        Route::get('iuran/rekap',           [\App\Http\Controllers\IuranController::class, 'rekapBulanan'])->name('iuran.rekap');
-        Route::get('iuran/tunggakan',       [\App\Http\Controllers\IuranController::class, 'tunggakan'])->name('iuran.tunggakan');
-        Route::get('iuran/jenis/list',      [\App\Http\Controllers\IuranController::class, 'jenisList'])->name('iuran.jenis.list');
+        Route::get('iuran',                    [\App\Http\Controllers\IuranController::class, 'index'])->name('iuran.index');
+        Route::get('iuran/list',               [\App\Http\Controllers\IuranController::class, 'tagihanList'])->name('iuran.list');
+        Route::get('iuran/context',            [\App\Http\Controllers\IuranController::class, 'context'])->name('iuran.context');
+        Route::get('iuran/rekap',              [\App\Http\Controllers\IuranController::class, 'rekapBulanan'])->name('iuran.rekap');
+        Route::get('iuran/tunggakan',          [\App\Http\Controllers\IuranController::class, 'tunggakan'])->name('iuran.tunggakan');
+        Route::get('iuran/jenis/list',         [\App\Http\Controllers\IuranController::class, 'jenisList'])->name('iuran.jenis.list');
+        Route::get('iuran/periode/list',       [\App\Http\Controllers\IuranController::class, 'periodeList'])->name('iuran.periode.list');
+        Route::get('iuran/pembayaran/list',    [\App\Http\Controllers\IuranController::class, 'pembayaranList'])->name('iuran.pembayaran.list');
     });
 
     // ── Iuran Saya (warga: history tagihan sendiri) ──────────────────────
@@ -83,12 +88,13 @@ Route::middleware('auth')->group(function () {
     });
     // Bayar & keringanan: koordinator juga bisa, otorisasi di controller (kkFilter)
     Route::middleware('auth')->group(function () {
-        Route::post('iuran/bayar',           [\App\Http\Controllers\IuranController::class, 'bayar'])->name('iuran.bayar');
+        Route::post('iuran/pembayaran/save', [\App\Http\Controllers\IuranController::class, 'pembayaranSave'])->name('iuran.pembayaran.save');
         Route::post('iuran/keringanan',      [\App\Http\Controllers\IuranController::class, 'tandaiKeringanan'])->name('iuran.keringanan');
     });
-    // Generate & manage: hanya admin/ketua/bendahara/sekretaris
+    // Periode & manage: hanya admin/ketua/bendahara/sekretaris
     Route::middleware('role:admin,ketua,bendahara,sekretaris')->group(function () {
-        Route::post('iuran/generate',        [\App\Http\Controllers\IuranController::class, 'generateTagihan'])->name('iuran.generate');
+        Route::post('iuran/periode/buka',    [\App\Http\Controllers\IuranController::class, 'bukaPeriode'])->name('iuran.periode.buka');
+        Route::post('iuran/periode/tutup',   [\App\Http\Controllers\IuranController::class, 'tutupBuku'])->name('iuran.periode.tutup');
         Route::post('iuran/import-tunggakan',[\App\Http\Controllers\IuranController::class, 'importTunggakan'])->name('iuran.import-tunggakan');
         Route::post('iuran/jenis/save',      [\App\Http\Controllers\IuranController::class, 'jenisSave'])->name('iuran.jenis.save');
         Route::post('iuran/jenis/delete',    [\App\Http\Controllers\IuranController::class, 'jenisRemove'])->name('iuran.jenis.delete');

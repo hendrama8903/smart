@@ -33,7 +33,7 @@
       <div class="keu-head-icon" style="background:var(--biru-soft);color:var(--biru)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       </div>
-      <div><h3 id="bookingModalTitle">Tambah Booking</h3><p class="keu-sub" id="bookingModalSub">Penggunaan fasilitas RT</p></div>
+      <h3 id="bookingModalTitle">Tambah Booking</h3>
     </div>
     <form onsubmit="return false" class="keu-body" style="max-height:70vh;overflow-y:auto">
       <input type="hidden" id="b_id">
@@ -68,7 +68,7 @@
     <div class="keu-foot">
       <button class="mbtn ghost" onclick="bookingClose()">Batal</button>
       <button class="mbtn mbtn-save" onclick="bookingSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Simpan
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan
       </button>
     </div>
   </div>
@@ -81,7 +81,7 @@
       <div class="keu-head-icon" style="background:var(--daun-pucat);color:var(--daun)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
       </div>
-      <div><h3>Catat Pembayaran</h3><p class="keu-sub" id="bayarSub">—</p></div>
+      <h3>Catat Pembayaran</h3>
     </div>
     <div class="keu-body">
       <input type="hidden" id="pay_id">
@@ -94,7 +94,7 @@
     <div class="keu-foot">
       <button class="mbtn ghost" onclick="bayarClose()">Batal</button>
       <button class="mbtn mbtn-save" onclick="bayarSave()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Simpan
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan
       </button>
     </div>
   </div>
@@ -130,7 +130,7 @@
 .sum-lbl{font-size:11.5px;color:var(--redup);font-weight:600;margin-bottom:6px}
 .sum-val{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--tinta)}
 .sum-sub{font-size:11px;color:var(--redup);margin-top:3px}
-.grid-wrap{background:var(--surface);border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.grid-wrap{background:var(--surface);border:1px solid var(--garis);overflow:auto;box-shadow:var(--shadow)}
 #gridBooking,.dx-widget{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 #gridBooking .dx-datagrid{border:none;color:var(--tinta)}
 #gridBooking .dx-datagrid-headers{background:var(--kertas-2);border-bottom:1px solid var(--garis)}
@@ -167,18 +167,26 @@
 .keu-head-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
 .keu-head-icon svg{width:17px;height:17px}
 .keu-head h3{font-size:15px;font-weight:800;margin:0 0 1px}
-.keu-sub{font-size:12px;color:var(--redup);margin:0}
 .keu-body{padding:18px 20px;display:flex;flex-direction:column;gap:0}
 .ff{margin-bottom:13px;display:flex;flex-direction:column}
 .ff>label{font-size:12px;font-weight:700;margin-bottom:5px;color:var(--redup)}
 .ff2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .hint{font-size:11px;color:#9aa89f;font-weight:500}.req{color:var(--stempel)}
 .bayar-info{padding:10px 13px;background:var(--kertas);border:1px solid var(--garis);border-radius:9px;margin-bottom:14px;font-size:13px}
-.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 20px 20px}
-.keu-foot .mbtn{flex:0 0 auto}
-.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
-.mbtn-save:hover{background:var(--hutan-2)}.mbtn-save svg{width:14px;height:14px}
+.keu-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--garis);background:var(--kertas);border-radius:0 0 14px 14px}
+.keu-foot .mbtn{flex:0 0 auto;min-width:90px}
+.keu-foot .mbtn.ghost{background:var(--stempel-soft);color:var(--stempel);border:1.5px solid #f5c6bb}
+.keu-foot .mbtn.ghost:hover{background:#fde5e0}
+.mbtn-save{display:inline-flex;align-items:center;gap:7px;background:var(--hutan);color:#fff;font-weight:700;font-size:13px;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:.14s}
+.mbtn-save:hover{background:var(--hutan-2)}
+.mbtn-save svg{width:13px;height:13px}
 @media(max-width:900px){.iuran-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){
+  .keu-toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .keu-title{font-size:18px;white-space:normal}
+  .keu-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .grid-wrap{height:calc(100vh - 210px)}
+}
 </style>
 @endpush
 
@@ -231,6 +239,7 @@ $(function(){
     showBorders:false,showColumnLines:true,showRowLines:true,
     rowAlternationEnabled:true,width:"100%",height:"100%",
     columnAutoWidth:true,
+    scrolling: { useNative: true, showScrollbar: 'always', mode: 'standard' },
     headerFilter:{visible:true},
     paging:{pageSize:50},
     pager:{visible:true,displayMode:"compact",showPageSizeSelector:true,allowedPageSizes:[25,50,"all"],showInfo:true},
@@ -278,7 +287,7 @@ $(function(){
           var d=o.row.data;
           var wrap=$('<div style="display:flex;gap:4px;justify-content:center">');
           if(d.status==='menunggu'){
-            $('<button class="wg-ic-btn wg-ic-ok" title="Setujui"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></button>').on('click',function(){setujui(d.id);}).appendTo(wrap);
+            $('<button class="wg-ic-btn wg-ic-ok" title="Setujui"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></button>').on('click',function(){setujui(d.id);}).appendTo(wrap);
           }
           if(d.status==='disetujui'&&d.status_bayar!=='lunas'){
             $('<button class="wg-ic-btn wg-ic-pay" title="Catat Bayar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></button>').on('click',function(){openBayar(d);}).appendTo(wrap);
