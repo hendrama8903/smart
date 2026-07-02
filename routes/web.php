@@ -95,6 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin,ketua,bendahara,sekretaris')->group(function () {
         Route::post('iuran/periode/buka',    [\App\Http\Controllers\IuranController::class, 'bukaPeriode'])->name('iuran.periode.buka');
         Route::post('iuran/periode/tutup',   [\App\Http\Controllers\IuranController::class, 'tutupBuku'])->name('iuran.periode.tutup');
+        Route::post('iuran/sinkron-kk',      [\App\Http\Controllers\IuranController::class, 'sinkronKK'])->name('iuran.sinkron-kk');
         Route::post('iuran/import-tunggakan',[\App\Http\Controllers\IuranController::class, 'importTunggakan'])->name('iuran.import-tunggakan');
         Route::post('iuran/jenis/save',      [\App\Http\Controllers\IuranController::class, 'jenisSave'])->name('iuran.jenis.save');
         Route::post('iuran/jenis/delete',    [\App\Http\Controllers\IuranController::class, 'jenisRemove'])->name('iuran.jenis.delete');

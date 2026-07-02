@@ -518,6 +518,68 @@ class IuranController extends Controller
         );
     }
 
+    // ─── Sinkronkan KK baru ke periode yang sedang buka ──────────────────
+    public function sinkronKK(Request $request): JsonResponse
+    {
+        $request->validate([
+            'jenis_iuran_id' => ['nullable', 'exists:jenis_iuran,id'],
+            'periode_id'     => ['nullable', 'exists:iuran_periode,id'],
+        ]);
+
+        $openPeriodes = IuranPeriode::where('status', 'buka')
+            ->with('jenisIuran')
+            ->when($request->filled('jenis_iuran_id'), fn ($q) => $q->where('jenis_iuran_id', $request->jenis_iuran_id))
+            ->when($request->filled('periode_id'),     fn ($q) => $q->where('id', $request->periode_id))
+            ->get();
+
+        if ($openPeriodes->isEmpty()) {
+            return response()->json(['ok' => false, 'message' => 'Tidak ada periode yang sedang buka.'], 422);
+        }
+
+        $allKkIds  = KartuKeluarga::where('aktif', true)->pluck('id');
+        $dibuat    = 0;
+        $now       = now();
+        $petugasId = auth()->id();
+
+        DB::transaction(function () use ($openPeriodes, $allKkIds, &$dibuat, $now, $petugasId) {
+            foreach ($openPeriodes as $periode) {
+                $periodeDate = $periode->bulan
+                    ? \Carbon\Carbon::create($periode->tahun, $periode->bulan, 1)->toDateString()
+                    : \Carbon\Carbon::create($periode->tahun, 1, 1)->toDateString();
+
+                $existingKkIds = IuranTagihan::where('jenis_iuran_id', $periode->jenis_iuran_id)
+                    ->where('periode', $periodeDate)
+                    ->pluck('kartu_keluarga_id');
+
+                $newKkIds = $allKkIds->diff($existingKkIds)->values();
+
+                foreach ($newKkIds->chunk(200) as $chunk) {
+                    IuranTagihan::insert(
+                        $chunk->map(fn ($kkId) => [
+                            'kartu_keluarga_id' => $kkId,
+                            'jenis_iuran_id'    => $periode->jenis_iuran_id,
+                            'periode_id'        => $periode->id,
+                            'periode'           => $periodeDate,
+                            'nominal'           => $periode->jenisIuran->nominal,
+                            'nominal_dibayar'   => 0,
+                            'status'            => 'belum',
+                            'petugas_id'        => $petugasId,
+                            'created_at'        => $now,
+                            'updated_at'        => $now,
+                        ])->toArray()
+                    );
+                    $dibuat += $chunk->count();
+                }
+            }
+        });
+
+        $msg = $dibuat > 0
+            ? "{$dibuat} tagihan baru berhasil dibuat untuk KK yang belum tercatat."
+            : "Semua KK aktif sudah memiliki tagihan pada periode yang buka.";
+
+        return response()->json(['ok' => true, 'message' => $msg, 'dibuat' => $dibuat]);
+    }
+
     // ─── Import tunggakan historis ────────────────────────────────────────
     public function importTunggakan(Request $request): JsonResponse
     {

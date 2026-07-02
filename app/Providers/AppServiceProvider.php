@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Warga;
 use App\Observers\AuditObserver;
 use App\Observers\IuranTagihanObserver;
+use App\Observers\KartuKeluargaObserver;
 use App\Observers\PendopoBookingObserver;
 use App\Observers\PengumumanObserver;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Warga::observe(AuditObserver::class);
         KartuKeluarga::observe(AuditObserver::class);
+        KartuKeluarga::observe(KartuKeluargaObserver::class);
         Kas::observe(AuditObserver::class);
         IuranTagihan::observe(AuditObserver::class);
         Pengumuman::observe(AuditObserver::class);

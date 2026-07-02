@@ -19,6 +19,10 @@
       <svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       Tutup Buku
     </button>
+    <button class="btn btn-sinkron" id="btnSinkronKK" type="button" onclick="doSinkronKK()" style="display:none" title="Tambahkan tagihan untuk KK yang baru masuk setelah buka buku">
+      <svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Sinkronkan KK
+    </button>
     <button class="btn btn-unduh" id="btnUnduh" type="button" onclick="exportIuran()">
       <svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Unduh
@@ -237,6 +241,7 @@
 .keu-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
 .btn-buka-periode{background:#6366F1!important;color:#fff!important}.btn-buka-periode:hover{filter:brightness(1.08)}
 .btn-tutup-buku{background:#F59E0B!important;color:#fff!important}.btn-tutup-buku:hover{filter:brightness(1.08)}
+.btn-sinkron{background:#6366f1!important;color:#fff!important}.btn-sinkron:hover{filter:brightness(1.1)}.btn-sinkron:disabled{opacity:.6;cursor:not-allowed}
 .btn-unduh{background:var(--biru)!important;color:#fff!important}.btn-unduh:hover{filter:brightness(1.08)}
 .btn-import{background:#B8860B!important;color:#fff!important}.btn-import:hover{filter:brightness(1.08)}
 .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none}
@@ -351,6 +356,7 @@ const urlPembayaran    = "{{ route('iuran.pembayaran.save') }}";
 const urlPembayaranList= "{{ route('iuran.pembayaran.list') }}";
 const urlKeringanan    = "{{ route('iuran.keringanan') }}";
 const urlImportTunggakan = "{{ route('iuran.import-tunggakan') }}";
+const urlSinkronKK       = "{{ route('iuran.sinkron-kk') }}";
 
 let grid, jenisList=[], gangList=[], periodeList=[];
 let curJenis   = null;
@@ -459,10 +465,12 @@ function updatePeriodeBar(){
   statusEl.className = 'pbar-status '+(p.status==='buka'?'buka':'tutup');
 
   document.getElementById('btnTutupBuku').style.display = (isAdmin && p.status==='buka') ? 'inline-flex' : 'none';
+  document.getElementById('btnSinkronKK').style.display  = (isAdmin && p.status==='buka') ? 'inline-flex' : 'none';
 }
 
 function showPeriodeEmpty(){
   document.getElementById('periodeInfo').style.display='none';
+  document.getElementById('btnSinkronKK').style.display='none';
   document.getElementById('periodeEmpty').style.display='flex';
   curPeriode = null;
   refreshAll();
@@ -638,6 +646,21 @@ function doTutupBuku(){
       loadPeriodeList();
     })
     .fail(function(xhr){DevExpress.ui.notify(xhr.responseJSON?.message||"Gagal","error",3000);});
+}
+
+// ── Sinkronkan KK baru ────────────────────────────────────────────────
+function doSinkronKK(){
+  if(!curPeriode){ DevExpress.ui.notify("Pilih periode terlebih dahulu","warning",2500); return; }
+  if(!confirm("Tambahkan tagihan untuk KK yang baru masuk pada periode ini?")) return;
+  var btn = document.getElementById('btnSinkronKK');
+  btn.disabled = true;
+  $.ajax({url:urlSinkronKK, type:"POST", data:{periode_id:curPeriode}})
+    .done(function(r){
+      DevExpress.ui.notify(r.message, r.dibuat>0 ? "success" : "info", 3500);
+      if(r.dibuat>0){ loadTagihan(); loadRekap(); }
+    })
+    .fail(function(xhr){ DevExpress.ui.notify(xhr.responseJSON?.message||"Gagal","error",3000); })
+    .always(function(){ btn.disabled=false; });
 }
 
 // ── Bayar (FIFO) ──────────────────────────────────────────────────────
