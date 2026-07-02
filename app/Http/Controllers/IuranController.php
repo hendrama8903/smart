@@ -16,7 +16,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class IuranController extends Controller
 {
@@ -178,28 +177,33 @@ class IuranController extends Controller
                 ? \Carbon\Carbon::create($tahun, $bulan, 1)->toDateString()
                 : \Carbon\Carbon::create($tahun, 1, 1)->toDateString();
 
-            $kkList = KartuKeluarga::where('aktif', true)->get();
+            // Ambil semua KK aktif dan yang sudah ada tagihan (2 query, bukan N+1)
+            $allKkIds = KartuKeluarga::where('aktif', true)->pluck('id');
+            $existingKkIds = IuranTagihan::where('jenis_iuran_id', $jenis->id)
+                ->where('periode', $periodeDate)
+                ->pluck('kartu_keluarga_id');
 
-            foreach ($kkList as $kk) {
-                $exists = IuranTagihan::where('kartu_keluarga_id', $kk->id)
-                    ->where('jenis_iuran_id', $jenis->id)
-                    ->where('periode', $periodeDate)
-                    ->exists();
+            $newKkIds  = $allKkIds->diff($existingKkIds)->values();
+            $now       = now();
+            $petugasId = auth()->id();
 
-                if ($exists) continue;
-
-                IuranTagihan::create([
-                    'kartu_keluarga_id' => $kk->id,
-                    'jenis_iuran_id'    => $jenis->id,
-                    'periode_id'        => $p->id,
-                    'periode'           => $periodeDate,
-                    'nominal'           => $jenis->nominal,
-                    'nominal_dibayar'   => 0,
-                    'status'            => 'belum',
-                    'petugas_id'        => auth()->id(),
-                ]);
-                $dibuat++;
+            foreach ($newKkIds->chunk(200) as $chunk) {
+                IuranTagihan::insert(
+                    $chunk->map(fn ($kkId) => [
+                        'kartu_keluarga_id' => $kkId,
+                        'jenis_iuran_id'    => $jenis->id,
+                        'periode_id'        => $p->id,
+                        'periode'           => $periodeDate,
+                        'nominal'           => $jenis->nominal,
+                        'nominal_dibayar'   => 0,
+                        'status'            => 'belum',
+                        'petugas_id'        => $petugasId,
+                        'created_at'        => $now,
+                        'updated_at'        => $now,
+                    ])->toArray()
+                );
             }
+            $dibuat = $newKkIds->count();
         });
 
         return response()->json([
@@ -224,7 +228,10 @@ class IuranController extends Controller
         }
 
         DB::transaction(function () use ($periode, $request) {
-            $tagihan = IuranTagihan::where('periode_id', $periode->id)->get();
+            // Lock tagihan agar pembayaran yang masuk bersamaan tidak mengubah data sebelum snapshot selesai
+            $tagihan = IuranTagihan::where('periode_id', $periode->id)
+                ->lockForUpdate()
+                ->get();
 
             $totalTagihan   = $tagihan->sum('nominal');
             $totalTerkumpul = $tagihan->sum('nominal_dibayar');
@@ -318,7 +325,16 @@ class IuranController extends Controller
             return response()->json(['ok' => false, 'message' => 'Anda tidak memiliki akses ke KK ini.'], 403);
         }
 
-        $jumlah = (float) $request->jumlah_total;
+        // Validasi: pastikan ada tagihan yang belum lunas
+        $hasTagihan = IuranTagihan::where('kartu_keluarga_id', $request->kartu_keluarga_id)
+            ->where('jenis_iuran_id', $request->jenis_iuran_id)
+            ->whereIn('status', ['belum', 'sebagian'])
+            ->exists();
+        if (! $hasTagihan) {
+            return response()->json(['ok' => false, 'message' => 'Semua tagihan untuk KK ini sudah lunas.'], 422);
+        }
+
+        $jumlah = number_format((float) $request->jumlah_total, 2, '.', '');
 
         DB::transaction(function () use ($request, $jumlah) {
             // Simpan transaksi pembayaran
@@ -339,17 +355,20 @@ class IuranController extends Controller
             }
 
             // Alokasi FIFO ke tagihan belum/sebagian lunas (terlama dulu)
+            // lockForUpdate mencegah lost-update jika dua pembayaran masuk bersamaan
             $tagihanList = IuranTagihan::where('kartu_keluarga_id', $request->kartu_keluarga_id)
                 ->where('jenis_iuran_id', $request->jenis_iuran_id)
                 ->whereIn('status', ['belum', 'sebagian'])
                 ->orderBy('periode')
+                ->lockForUpdate()
                 ->get();
 
-            $sisa = $jumlah;
+            $sisa = $jumlah; // string untuk bcmath
             foreach ($tagihanList as $tagihan) {
-                if ($sisa <= 0) break;
+                if (bccomp($sisa, '0', 2) <= 0) break;
 
-                $alokasi = min($sisa, (float) $tagihan->sisa);
+                $tagihanSisa = number_format($tagihan->sisa, 2, '.', '');
+                $alokasi     = bccomp($sisa, $tagihanSisa, 2) >= 0 ? $tagihanSisa : $sisa;
 
                 IuranAlokasi::create([
                     'pembayaran_id' => $pembayaran->id,
@@ -357,10 +376,9 @@ class IuranController extends Controller
                     'jumlah'        => $alokasi,
                 ]);
 
-                $tagihan->nominal_dibayar = (float) $tagihan->nominal_dibayar + $alokasi;
-                // Update tanggal & petugas di tagihan (info pembayaran terakhir)
-                $tagihan->tanggal_bayar = $request->tanggal_bayar;
-                $tagihan->petugas_id    = auth()->id();
+                $tagihan->nominal_dibayar = bcadd((string) $tagihan->nominal_dibayar, $alokasi, 2);
+                $tagihan->tanggal_bayar   = $request->tanggal_bayar;
+                $tagihan->petugas_id      = auth()->id();
                 $tagihan->updateStatus();
 
                 // Jika lunas, hapus flag tunggakan
@@ -369,7 +387,7 @@ class IuranController extends Controller
                     $tagihan->save();
                 }
 
-                $sisa -= $alokasi;
+                $sisa = bcsub($sisa, $alokasi, 2);
             }
 
             // Catat ke kas
@@ -409,6 +427,7 @@ class IuranController extends Controller
             ->where('kartu_keluarga_id', $request->kartu_keluarga_id)
             ->where('jenis_iuran_id', $request->jenis_iuran_id)
             ->orderByDesc('tanggal_bayar')
+            ->limit(100)
             ->get();
 
         return response()->json($list->map(fn ($p) => [

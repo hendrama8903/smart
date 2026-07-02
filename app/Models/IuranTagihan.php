@@ -28,17 +28,18 @@ class IuranTagihan extends Model
 
     public function getSisaAttribute(): float
     {
-        return max(0, (float) $this->nominal - (float) $this->nominal_dibayar);
+        $sisa = bcsub((string) $this->nominal, (string) $this->nominal_dibayar, 2);
+        return max(0.0, (float) $sisa);
     }
 
     public function updateStatus(): void
     {
-        $dibayar = (float) $this->nominal_dibayar;
-        $nominal = (float) $this->nominal;
+        $dibayar = (string) $this->nominal_dibayar;
+        $nominal = (string) $this->nominal;
 
-        if ($dibayar <= 0) {
+        if (bccomp($dibayar, '0', 2) <= 0) {
             $this->status = 'belum';
-        } elseif ($dibayar >= $nominal) {
+        } elseif (bccomp($dibayar, $nominal, 2) >= 0) {
             $this->status = 'lunas';
         } else {
             $this->status = 'sebagian';
