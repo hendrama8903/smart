@@ -314,7 +314,6 @@ function initEditors(){
 function kasAdd(tipe){
   $("#k_id").val(''); $("#k_tipe").val(tipe);
   document.getElementById('kasModalTitle').textContent = tipe==='masuk'?'Kas Masuk':'Kas Keluar';
-  document.getElementById('kasModalSub').textContent   = tipe==='masuk'?'Catat pemasukan kas RT':'Catat pengeluaran kas RT';
   var icon=document.getElementById('kasModalIcon');
   icon.style.background = tipe==='masuk'?'var(--daun-pucat)':'var(--stempel-soft)';
   icon.style.color      = tipe==='masuk'?'var(--daun)':'var(--stempel)';
@@ -332,7 +331,6 @@ function kasAdd(tipe){
 function kasEdit(d){
   $("#k_id").val(d.id); $("#k_tipe").val(d.tipe);
   document.getElementById('kasModalTitle').textContent = d.tipe==='masuk'?'Ubah Kas Masuk':'Ubah Kas Keluar';
-  document.getElementById('kasModalSub').textContent   = d.keterangan||'';
   $("#k_tanggal").dxDateBox("instance").option("value",d.tanggal_raw?new Date(d.tanggal_raw):new Date());
   $("#k_jumlah").dxNumberBox("instance").option("value",d.jumlah);
   $("#k_keterangan").dxTextBox("instance").option("value",d.keterangan||"");
