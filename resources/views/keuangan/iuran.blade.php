@@ -278,7 +278,6 @@
 .tg-flag{font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#FEF3C7;color:#92400E;margin-left:4px}
 .btn-bayar{padding:4px 12px;border-radius:7px;font-size:12px;font-weight:700;background:var(--hutan);color:#fff;border:none;cursor:pointer;transition:.13s}
 .btn-bayar:hover{background:var(--hutan-2)}
-.btn-riwayat{padding:4px 10px;border-radius:7px;font-size:12px;font-weight:700;background:var(--biru-soft);color:var(--biru);border:none;cursor:pointer;transition:.13s}
 .mono-sm{font-family:'IBM Plex Mono',monospace;font-size:12px}
 
 /* Modal */
@@ -552,7 +551,7 @@ function initGrid(){
               $('<button class="btn-bayar" type="button">Bayar</button>')
                 .on('click',function(){openBayar(d);}).appendTo(wrap);
             }
-            $('<button class="btn-riwayat" type="button">Riwayat</button>')
+            $('<button style="width:26px;height:26px;border-radius:6px;border:none;cursor:pointer;background:var(--biru-soft);color:var(--biru);display:inline-flex;align-items:center;justify-content:center" title="Riwayat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>')
               .on('click',function(){openRiwayatOnly(d);}).appendTo(wrap);
             // Tombol keringanan
             $('<button style="width:26px;height:26px;border-radius:6px;border:none;cursor:pointer;background:'+(d.is_keringanan?'#B8860B':'var(--kertas-2)')+';color:'+(d.is_keringanan?'#fff':'var(--redup)')+';display:inline-flex;align-items:center;justify-content:center" title="Keringanan"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>')
@@ -657,6 +656,14 @@ function openBayar(d){
   $("#b_kk_id").val(d.kk_id);
   $("#b_jenis_id").val(curJenis);
   document.getElementById('bayarTitle').textContent = 'Input Pembayaran';
+
+  // Reset form supaya tidak menampilkan sisa nilai dari sesi bayar sebelumnya
+  $("#b_nominal").dxNumberBox("instance").option("value", null);
+  $("#b_tanggal").dxDateBox("instance").option("value", new Date());
+  $("#b_metode").dxSelectBox("instance").option("value", null);
+  $("#b_keterangan").dxTextBox("instance").option("value", "");
+  document.getElementById('bayarAlokasiInfo').innerHTML = '<div class="bai-empty">Memuat...</div>';
+
   loadAlokasiPreview(d.kk_id);
   document.getElementById('bayarModal').classList.add('show');
 }
