@@ -417,7 +417,6 @@ function bookingAdd(){
 function bookingEdit(d){
   $("#b_id").val(d.id);
   document.getElementById('bookingModalTitle').textContent='Ubah Booking';
-  document.getElementById('bookingModalSub').textContent=d.nama_pemohon;
   $("#b_nama_pemohon").dxTextBox("instance").option("value",d.nama_pemohon||"");
   $("#b_nama_acara").dxTextBox("instance").option("value",d.nama_acara||"");
   $("#b_tgl_mulai").dxDateBox("instance").option("value",d.tanggal_mulai?new Date(d.tanggal_mulai.split('/').reverse().join('-')):null);
@@ -475,7 +474,6 @@ function setujui(id){
 
 function openBayar(d){
   $("#pay_id").val(d.id);
-  document.getElementById('bayarSub').textContent=d.nama_pemohon+' — '+d.nama_acara;
   document.getElementById('bayarInfo').innerHTML='<b>Total Bayar:</b> '+rupiah(d.total_bayar)+'&nbsp;|&nbsp;<b>Masuk Kas RT:</b> <span style="color:#2D6A4F;font-weight:700">'+rupiah(d.total_kas_rt)+'</span>';
   document.getElementById('bayarModal').classList.add('show');
 }

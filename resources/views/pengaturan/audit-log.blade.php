@@ -178,7 +178,6 @@ function loadData(){
 }
 
 function openDetail(d){
-  document.getElementById('detailSub').textContent = d.deskripsi || (d.modul+' #'+d.modul_id);
   var html='<div class="at-meta">';
   html+='<div class="at-meta-item"><label>User</label><span>'+esc(d.user||'System')+'</span></div>';
   html+='<div class="at-meta-item"><label>Aksi</label><span>'+esc(d.aksi_label)+'</span></div>';

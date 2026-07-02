@@ -392,7 +392,6 @@ var curKoordinatorId = null;
 
 function openTambahAnggota(koordinator){
   curKoordinatorId = koordinator.id;
-  document.getElementById('anggotaModalSub').textContent = koordinator.nama + (koordinator.nama_gang?' — '+koordinator.nama_gang:'');
   document.getElementById('anggotaModal').classList.add('show');
 
   // Init tagbox jika belum

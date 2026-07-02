@@ -374,7 +374,6 @@ function updateTarifCalc(){
 function tarifAdd(fasId,fasNama){
   $("#t_id").val(''); $("#t_fasilitas_id").val(fasId);
   document.getElementById('tarifModalTitle').textContent='Tambah Tarif';
-  document.getElementById('tarifModalSub').textContent=fasNama;
   $("#t_nama_tarif").dxTextBox("instance").option("value","");
   $("#t_kategori").dxSelectBox("instance").option("value","warga");
   $("#t_nominal_total").dxNumberBox("instance").option("value",0);
@@ -388,7 +387,6 @@ function tarifAdd(fasId,fasNama){
 function tarifEdit(d,fasNama){
   $("#t_id").val(d.id); $("#t_fasilitas_id").val(d.fasilitas_id);
   document.getElementById('tarifModalTitle').textContent='Ubah Tarif';
-  document.getElementById('tarifModalSub').textContent=fasNama;
   $("#t_nama_tarif").dxTextBox("instance").option("value",d.nama_tarif||"");
   $("#t_kategori").dxSelectBox("instance").option("value",d.kategori||"warga");
   $("#t_nominal_total").dxNumberBox("instance").option("value",d.nominal_total||0);

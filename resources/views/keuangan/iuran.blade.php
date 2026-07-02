@@ -623,8 +623,6 @@ function doBukaPeriode(){
 
 // ── Tutup Buku ────────────────────────────────────────────────────────
 function openTutupBuku(){
-  var p = periodeList.find(function(x){return x.id===curPeriode;});
-  document.getElementById('tutupBukuSub').textContent = p ? p.label : '—';
   if(!$("#tb_catatan").data('dx-was-initialized')){
     $("#tb_catatan").dxTextArea({height:80, placeholder:'Catatan penutupan (opsional)...'});
   }
@@ -659,7 +657,6 @@ function openBayar(d){
   $("#b_kk_id").val(d.kk_id);
   $("#b_jenis_id").val(curJenis);
   document.getElementById('bayarTitle').textContent = 'Input Pembayaran';
-  document.getElementById('bayarSub').textContent   = d.kepala_keluarga+(d.blok_no?' — '+d.blok_no:'');
   loadAlokasiPreview(d.kk_id);
   document.getElementById('bayarModal').classList.add('show');
 }
@@ -723,7 +720,6 @@ function openRiwayatOnly(d){
 }
 
 function loadRiwayat(d){
-  document.getElementById('riwayatSub').textContent = d.kepala_keluarga+(d.blok_no?' — '+d.blok_no:'');
   document.getElementById('riwayatList').innerHTML = '<div style="padding:20px;text-align:center;color:var(--redup);font-size:13px">Memuat...</div>';
   document.getElementById('riwayatModal').classList.add('show');
 
@@ -820,7 +816,6 @@ function importTunggakanClose(){ document.getElementById('importTunggakanModal')
 // ── Keringanan ────────────────────────────────────────────────────────
 function openKeringanan(d){
   $("#kr_tagihan_id").val(d.tagihan_id);
-  document.getElementById('keringananSub').textContent = d.kepala_keluarga+(d.blok_no?' — '+d.blok_no:'');
   if(!$("#kr_aktif").data('dx-was-initialized')){
     $("#kr_aktif").dxSwitch({value:false});
     $("#kr_catatan").dxTextBox({placeholder:'cth. Warga tidak mampu, bayar seikhlasnya...'});

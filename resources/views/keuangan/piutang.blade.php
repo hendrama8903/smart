@@ -273,7 +273,6 @@ function initEditors(){
 function piutangAdd(){
   $("#p_id").val('');
   document.getElementById('piutangModalTitle').textContent='Tambah Piutang';
-  document.getElementById('piutangModalSub').textContent='Catat uang yang dipinjam warga';
   $("#p_nama").dxTextBox("instance").option("value","");
   $("#p_jumlah").dxNumberBox("instance").option("value",null);
   $("#p_tgl_pinjam").dxDateBox("instance").option("value",new Date());
@@ -286,7 +285,6 @@ function piutangAdd(){
 function piutangEdit(d){
   $("#p_id").val(d.id);
   document.getElementById('piutangModalTitle').textContent='Ubah Piutang';
-  document.getElementById('piutangModalSub').textContent='Mengubah: '+d.nama_peminjam;
   $("#p_nama").dxTextBox("instance").option("value",d.nama_peminjam||"");
   $("#p_jumlah").dxNumberBox("instance").option("value",d.jumlah);
   $("#p_tgl_pinjam").dxDateBox("instance").option("value",d.tanggal_pinjam?new Date(d.tanggal_pinjam.split('/').reverse().join('-')):null);
@@ -327,7 +325,6 @@ function piutangDelete(d){
 
 function openCicilan(d){
   $("#c_piutang_id").val(d.id);
-  document.getElementById('cicilanSub').textContent=d.nama_peminjam;
   document.getElementById('cicilanInfo').innerHTML='<b>Pinjaman:</b> '+rupiah(d.jumlah)+' &nbsp;|&nbsp; <b>Sudah kembali:</b> '+rupiah(d.jumlah_kembali)+' &nbsp;|&nbsp; <b>Sisa:</b> <span style="color:var(--stempel);font-weight:700">'+rupiah(d.sisa)+'</span>';
   $("#c_jumlah").dxNumberBox("instance").option("value",d.sisa);
   $("#c_tanggal").dxDateBox("instance").option("value",new Date());

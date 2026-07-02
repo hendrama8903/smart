@@ -294,7 +294,6 @@ function roleDelete(){
 function openMenuAccess(role){
   curRoleId = role.id;
   document.getElementById('menuAccessTitle').textContent = 'Akses Menu — ' + role.label;
-  document.getElementById('menuAccessSub').textContent   = 'Centang menu yang boleh diakses role "' + role.nama + '"';
 
   var tree = document.getElementById('menuAccessTree');
   tree.innerHTML = '<div style="padding:20px;text-align:center;color:var(--redup)">Memuat...</div>';
